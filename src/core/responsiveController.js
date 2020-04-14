@@ -18,12 +18,17 @@ function windowHasOffset(namespace) {
         totalHeight = heightOffset + globalContext.height(),
         viewHeight = viewContext.offset(),
         hasOffset = false;
-    if (!viewHeight) return hasOffset;
+
+    // If we have no height, there can be no offset
+    if (!viewHeight)
+        return hasOffset;
+
     var topOffset = viewHeight.top;
 
-    // Return true/false depending on whether there is an offset
-    return topOffset + viewContext.height() >= heightOffset && topOffset <= totalHeight && (hasOffset = true),
-        hasOffset
+    if (topOffset + viewContext.height() >= heightOffset && topOffset <= totalHeight)
+        hasOffset = true;
+
+    return hasOffset
 }
 
 /**
@@ -44,15 +49,21 @@ function calculateViewport() {
     var trackingElem = document.createElement("span"),
         previousViewport = viewport;
 
-    if (trackingElem.className = "responsive-tracking", document.body.appendChild(trackingElem), viewport = function (context) {
-        return createTrackingElement(context, "responsive-tracking--visible-on-large-desktop")
-    }(trackingElem) ? viewports.DESKTOP_LARGE : function (context) {
-        return createTrackingElement(context, "responsive-tracking--visible-on-desktop")
-    }(trackingElem) ? viewports.DESKTOP : function (context) {
-        return createTrackingElement(context, "responsive-tracking--visible-on-tablet")
-    }(trackingElem) ? viewports.TABLET : viewports.MOBILE, document.body.removeChild(trackingElem),
-    // Check if viewport has changed, if so, publish an event
-    void 0 !== previousViewport && previousViewport !== viewport) {
+    trackingElem.className = "responsive-tracking";
+    document.body.appendChild(trackingElem);
+
+    if (createTrackingElement(trackingElem, "responsive-tracking--visible-on-large-desktop"))
+        viewport = viewports.DESKTOP_LARGE;
+    else if (createTrackingElement(trackingElem, "responsive-tracking--visible-on-desktop"))
+        viewport = viewports.DESKTOP;
+    else if (createTrackingElement(trackingElem, "responsive-tracking--visible-on-tablet"))
+        viewport = viewports.TABLET;
+    else
+        viewport = viewports.MOBILE;
+
+    document.body.removeChild(trackingElem);
+
+    if (void 0 !== previousViewport && previousViewport !== viewport) {
         // Event data
         var publishData = {
             viewport: viewport,
@@ -63,7 +74,8 @@ function calculateViewport() {
         Events.publish(Events, responsiveViewChangeEventName, publishData);
         Object(jQuery)(window).trigger("elementals:viewport:change", publishData);
     }
-    return viewport
+
+    return viewport;
 }
 
 /**
