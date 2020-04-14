@@ -1,0 +1,7 @@
+/.idea
+
+/node_modules/
+/tests/app.css
+/tests/app.js
+
+/package-lock.json
