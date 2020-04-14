@@ -1,9 +1,7 @@
 /**
  * Create a custom event
- *
  * @param eventName
  * @param params
- *
  * @returns {CustomEvent}
  */
 export default function eventCreator(eventName, params) {
@@ -25,7 +23,6 @@ export default function eventCreator(eventName, params) {
 
 /**
  * Get event properties (bubbles and cancelable)
- *
  * @param event
  * @returns {*|null}
  */
@@ -65,7 +62,6 @@ function getEventProperties(event) {
 
 /**
  * Create an event
- *
  * @param eventName
  * @param context
  */
@@ -87,7 +83,6 @@ export function createEvent(eventName, context = document) {
 
 /**
  * Add event listener
- *
  * @param event
  * @param listener
  * @param context
@@ -98,7 +93,6 @@ export function addEventListener(event, listener, context = document) {
 
 /**
  * Remove event listener
- *
  * @param event
  * @param listener
  * @param context
@@ -109,10 +103,8 @@ export function removeEventListener(event, listener, context = document) {
 
 /**
  * Event factory for managing events
- *
  * @param selector
  * @param callback
- *
  * @returns {Function}
  */
 export function eventFactory(selector, callback) {

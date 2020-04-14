@@ -4,14 +4,13 @@ var eventToken = 0,
 
 /**
  * Subscribe to an event
- *
  * @param subject
  * @param event
  * @param callback
  * @param clientId
  * @returns {number}
  */
-function subscribe(subject, event, callback, clientId) {
+export function subscribe(subject, event, callback, clientId) {
     if ("function" != typeof callback)
         return -1;
 
@@ -30,13 +29,12 @@ function subscribe(subject, event, callback, clientId) {
 
 /**
  * Subscribe only once, once the vent was fired, we disappear
- *
  * @param subject
  * @param event
  * @param callback
  * @param clientId
  */
-function subscribeOnce(subject, event, callback, clientId) {
+export function subscribeOnce(subject, event, callback, clientId) {
     var subscription = subscribe(subject, event, function (toPublish) {
         callback(toPublish);
         unsubscribe(subscription)
@@ -45,58 +43,62 @@ function subscribeOnce(subject, event, callback, clientId) {
 
 /**
  * Unsubscribe from a particular client
- *
  * @param clientId
  */
-function unsubscribe(clientId) {
+export function unsubscribe(clientId) {
     subscriptionList = subscriptionList.filter(function (subscription) {
         return subscription.token !== clientId
     });
 }
 
+export function unsubscribeAll(clientId) {
+    subscriptionList = subscriptionList.filter(function (subscription) {
+        return subscription.clientId !== clientId
+    })
+}
+
 /**
  * Publish an event with a context
- *
  * @param subject
  * @param event
  * @param toPublish
  */
-function publish(subject, event, toPublish) {
+export function publish(subject, event, toPublish) {
     subscriptionList.forEach(function(item) {
         item.subject === subject && item.event === event && item.callback(toPublish);
     })
 }
 
 /**
- * Export all functions
+ * Clear all events
  */
-export default {
-    subscribe: subscribe,
-    subscribeOnce: subscribeOnce,
-    unsubscribe: unsubscribe,
-    publish: publish,
-    clearAll: function() {
-        subscriptionList = []
-    },
-    getClient: function() {
-        return function (client) {
-            return {
-                subscribe: function (subject, event, callback) {
-                    return subscribe(subject, event, callback, client)
-                },
-                subscribeOnce(subject, event, callback) {
-                    return subscribeOnce(subject, event, callback, client)
-                },
-                publish: publish,
-                unsubscribe: unsubscribe,
-                unsubscribeAll: function () {
-                    !function (clientId) {
-                        subscriptionList = subscriptionList.filter(function (subscription) {
-                            return subscription.clientId !== clientId
-                        })
-                    }(client)
-                }
-            }
-        }(++autoClient)
+export function clearAll() {
+    subscriptionList = []
+}
+
+/**
+ * Create a client object
+ * @param clientId
+ */
+function createClient(clientId) {
+    return {
+        subscribe: function (subject, event, callback) {
+            return subscribe(subject, event, callback, clientId)
+        },
+        subscribeOnce: function(subject, event, callback) {
+            return subscribeOnce(subject, event, callback, clientId)
+        },
+        publish: publish,
+        unsubscribe: unsubscribe,
+        unsubscribeAll: function () {
+            unsubscribeAll(clientId);
+        }
     }
+}
+
+/**
+ * Get an event client
+ */
+export function getClient() {
+    return createClient(++autoClient)
 }

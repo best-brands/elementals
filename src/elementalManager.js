@@ -1,7 +1,7 @@
 import {default as elemental} from './elemental';
 import * as Collection from './core/collection';
 import * as ResponsiveController from './core/responsiveController';
-import {default as Events} from './core/events';
+import * as Events from './core/events';
 import * as toolkit from './core/toolkit';
 import jQuery from 'jquery';
 
@@ -35,7 +35,6 @@ var responsiveElemental = Object(elemental)("responsiveController", function (na
 
     /**
      * Check if active on the current viewport
-     *
      * @returns {boolean}
      */
     function isViewportActive() {
@@ -94,11 +93,8 @@ var responsiveElemental = Object(elemental)("responsiveController", function (na
 });
 
 /**
- * Parse the Json present in a elemental
- *
+ * Parse the Json present in an elemental
  * @param elementalConfig
- *
- * @returns {{isValid: boolean, error: *, results: *}|{isValid: boolean, results: any[]}}
  */
 function parseElementalJson(elementalConfig) {
     try {
@@ -118,9 +114,7 @@ function parseElementalJson(elementalConfig) {
 
 /**
  * Attempt to parse the elemental by tag
- *
  * @param elemental
- *
  * @returns {(*|any[])|{name: string}[]}
  */
 function parseElemental(elemental) {
@@ -152,7 +146,6 @@ function parseElemental(elemental) {
 
 /**
  * Set the elemental data
- *
  * @param elemental
  * @param key
  * @param value
@@ -174,9 +167,7 @@ function setElementalData(elemental, key, value) {
 
 /**
  * Update the Json from the elemental
- *
  * @param elemental
- *
  * @returns {*}
  */
 function updateElementalJson(elemental) {
@@ -200,11 +191,9 @@ function updateElementalJson(elemental) {
 
 /**
  * Get options to configure the elemental with
- *
  * @param config
  * @param elemental
  * @param elementalId
- *
  * @returns {{elementalOptions: *, elemental: *, elementalName: *, id: *, isActiveOn: *}}
  */
 function getOptionsForConfig(config, elemental, elementalId) {
@@ -220,11 +209,9 @@ function getOptionsForConfig(config, elemental, elementalId) {
 
 /**
  * Check if elemental is of function type
- *
  * @param name
  * @param config
  * @param initialised
- *
  * @returns {boolean}
  */
 function elementalIsFunction(name, config, initialised) {
@@ -233,9 +220,7 @@ function elementalIsFunction(name, config, initialised) {
 
 /**
  * Check if variable is a function
- *
  * @param variable
- *
  * @returns {boolean}
  */
 function isFunction(variable) {
@@ -244,7 +229,6 @@ function isFunction(variable) {
 
 /**
  * Get the elemental config property
- *
  * @param elemental
  */
 function getElementalConfigProperty(elemental) {
@@ -260,18 +244,15 @@ function getElementalConfigProperty(elemental) {
 
 /**
  * Get elementals by tag
- *
  * @param context
- *
  * @returns {*}
  */
 function getElementalsInContext(context) {
-    return Object(toolkit.selectAll)("[" . concat(elementalDataTag, "]"), context)
+    return Object(toolkit.selectAll)(`[${elementalDataTag}]`, context)
 }
 
 /**
  * Pause an elemental
- *
  * @param elemental
  * @param name
  * @param responsiveElemental
@@ -289,8 +270,7 @@ function pauseElemental(elemental, name, responsiveElemental)
 }
 
 /**
- * Destroy a elemental
- *
+ * Destroy an elemental
  * @param elemental
  * @param name
  * @param responsiveElemental
@@ -304,8 +284,7 @@ function destroyElemental(elemental, name, responsiveElemental)
 }
 
 /**
- * Resume a elemental
- *
+ * Resume an elemental
  * @param obj
  * @param elemental
  * @returns {*}
@@ -318,7 +297,7 @@ function resumeElemental(obj, elemental)
             processed: true
         });
     } catch (error) {
-        console.log(`A error occurred attempting to resume elemental: ${elemental.name}`);
+        console.log(`An error occurred attempting to resume elemental: ${elemental.name}`);
         return updateElementalJson({}, elemental, {
             processed: false
         })
@@ -327,7 +306,6 @@ function resumeElemental(obj, elemental)
 
 /**
  * Creates an elemental
- *
  * @param config
  * @param tag
  * @param options
@@ -341,7 +319,6 @@ function createElemental(config, tag, options, id)
 
 /**
  * Destroy a responsive elemental
- *
  * @param elemental
  * @param settings
  * @returns {*}
@@ -375,8 +352,7 @@ function destroyResponsiveElemental(elemental, settings)
 }
 
 /**
- * Clean up a elemental
- *
+ * Clean up an elemental
  * @param elemental
  */
 function cleanElemental(elemental) {
@@ -391,7 +367,6 @@ function cleanElemental(elemental) {
 
 /**
  * Delete elemental
- *
  * @param elementals
  */
 function deleteElemental(elementals) {
@@ -443,7 +418,7 @@ function bootElemental(config, tag, options, id, elemental)
         });
     } catch (error) {
         console.debug(error);
-        console.log(`A error occurred initializing elemental: ${elemental.name}`);
+        console.log(`An error occurred initializing elemental: ${elemental.name}`);
         return updateElementalJson({}, elemental, {
             processed: false
         })

@@ -9,7 +9,7 @@ import jQuery from 'jquery'
  * @returns {*}
  */
 function getElementalStorage(namespace, name) {
-    var list = Object(jQuery)(namespace).data("elementals." . concat(name));
+    var list = Object(jQuery)(namespace).data(`elementals.${name}`);
     return list ? Array.isArray(list) ? list : [list] : []
 }
 
@@ -57,9 +57,9 @@ export function add(storage, name, toAdd) {
         arrayMap = getElementalStorage(storage, name);
 
     if (arrayMap.length) {
-        arrayMap.includes(toAdd) || ElementalStorage.data("elementals." . concat(name), [] . concat(arrayMap, toAdd))
+        arrayMap.includes(toAdd) || ElementalStorage.data(`elementals.${name}`, [] + toAdd)
     } else {
-        ElementalStorage.data("elementals." . concat(name), toAdd)
+        ElementalStorage.data(`elementals.${name}`, toAdd)
     }
 }
 
@@ -74,9 +74,9 @@ export function remove(storage, name, toRemove) {
         arrayMap = getElementalStorage(storage, name);
 
     if (!toRemove || 1 === arrayMap.length && arrayMap[0] === toRemove) {
-        ElementalStorage.removeData("elementals." . concat(name))
+        ElementalStorage.removeData(`elementals.${name}`)
     } else {
-        ElementalStorage.data("elementals." . concat(name));
+        ElementalStorage.data(`elementals.${name}`);
         arrayMap.filter(function (item) {
             return item !== toRemove
         });

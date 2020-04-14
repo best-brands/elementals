@@ -1,4 +1,4 @@
-import {default as Events} from './events';
+import * as Events from './events';
 import jQuery from 'jquery';
 import * as viewports from './viewports';
 

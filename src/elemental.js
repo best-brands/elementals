@@ -1,9 +1,9 @@
-import {default as Events} from './core/events.js';
+import * as Events from './core/events.js';
 import * as Collection from './core/collection.js';
 import jQuery from "jquery";
 
 /**
- * Check the arguments of a component we are going to initialize
+ * Check the arguments of the elemental we are going to initialize
  *
  * @param name
  * @param factory
@@ -11,9 +11,9 @@ import jQuery from "jquery";
  */
 
 function checkArguments(name, factory, defaults) {
-    if ("string" != typeof name) throw new Error("Create elemental: elemental name should be a non empty string");
-    if ("function" != typeof factory) throw new Error("Create elemental: elemental factory should be a function");
-    if ("object" !== typeof(defaults) && defaults) throw new Error("Create elemental: default options should be an object if defined")
+    if ("string" != typeof name) throw new Error(`Create elemental: elemental name should be a non empty string`);
+    if ("function" != typeof factory) throw new Error(`Create elemental: elemental factory should be a function`);
+    if ("object" !== typeof(defaults) && defaults) throw new Error(`Create elemental: default options should be an object if defined`)
 }
 
 /**
@@ -32,8 +32,8 @@ function createElementalObject(elementalName, jElem, jqElem) {
         $el: jqElem,
         destroy: function () {
             eventSubscription.unsubscribeAll();
-            jqElem.removeData("elementals.".concat(elementalName));
-            jqElem.off(".".concat(elementalName));
+            jqElem.removeData(`elementals.${elementalName}`);
+            jqElem.off(`.${elementalName}`);
         },
         pubSubClient: eventSubscription
     }
