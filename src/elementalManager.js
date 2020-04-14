@@ -1,13 +1,11 @@
-// Available to all elementals
 import {default as elemental} from './elemental';
-import {default as Collection} from './core/collection';
+import * as Collection from './core/collection';
 import * as ResponsiveController from './core/responsiveController';
 import {default as Events} from './core/events';
 import * as toolkit from './core/toolkit';
 import jQuery from 'jquery';
 
 var elementalDataTag = 'data-elemental',
-    elementalStorage = Collection,
     elementalDestroyedEvent = "instance destroyed",
     elementalPausedEvent = "instance paused";
 
@@ -20,12 +18,12 @@ var responsiveElemental = Object(elemental)("responsiveController", function (na
     /**
      * Get the requested elemental
      */
-    function getElemental()
-    {
+    function getElemental() {
         if (elemental) return;
 
         // Initialize the elemental
         elemental = settings.elemental(name.$el, settings.elementalOptions);
+
         if (!elemental || elemental instanceof jQuery)
             elemental = name.$el.data(`elementals.${settings.elementalName}`);
 
@@ -40,10 +38,10 @@ var responsiveElemental = Object(elemental)("responsiveController", function (na
      *
      * @returns {boolean}
      */
-    function isViewportActive()
-    {
+    function isViewportActive() {
         var viewport = Object(ResponsiveController.getViewport)();
-        if (void 0 === settings.isActiveOn) return false;
+        if (void 0 === settings.isActiveOn)
+            return false;
         return -1 !== settings.isActiveOn.indexOf(viewport)
     }
 
@@ -54,11 +52,11 @@ var responsiveElemental = Object(elemental)("responsiveController", function (na
     function bootstrapper() {
         if (!isViewportActive()) {
             // If we dont have a elemental or its paused, return
-            if (!elemental || paused) return;
-
-            // Try pausing the elemental
+            if (!elemental || paused)
+                return;
             if (elemental.pause) try {
-                paused = true, elemental.pause();
+                paused = true;
+                elemental.pause();
             } catch (error) {
                 console.debug(`An error occurred attempting to pause elemental: ${settings.elementalName}`);
                 console.debug(error);
@@ -67,11 +65,11 @@ var responsiveElemental = Object(elemental)("responsiveController", function (na
             }
         } else {
             // If elemental is false, we get the elemental
-            if (!paused) return void getElemental();
+            if (!paused)
+                return void getElemental();
 
             // We have retrieved the elemental, now try resuming it
             if (elemental.resume) try {
-                // Resume elemental and set paused to false
                 paused = false;
                 elemental.resume();
             } catch (error) {
@@ -82,21 +80,16 @@ var responsiveElemental = Object(elemental)("responsiveController", function (na
         }
     }
 
-    // Callable that will be passed to the elementals data
     function cleanElemental(publishData) {
-        elemental === publishData.instance && (Events.unsubscribe(subscription),
-            elemental = void 0,
-            paused = false
-        )
+        if (elemental === publishData.instance) {
+            Events.unsubscribe(subscription);
+            elemental = void 0;
+            paused = false;
+        }
     }
 
-    // Subscribe to event
-    subscription = Events.subscribe(Events, ResponsiveController.default, bootstrapper);
-
-    // Subscribe once with the elemental name on event instance destroyed, we should clean the elemental then
-    Events.subscribeOnce(name.el, "instance destroyed", cleanElemental);
-
-    // Bootstrap
+    subscription = Events.subscribe(Events, ResponsiveController.responsiveEvent, bootstrapper);
+    Events.subscribeOnce(name.el, "instance destroyed", cleanElemental); // clean when elemental gets destroyed
     bootstrapper();
 });
 
@@ -191,12 +184,17 @@ function updateElementalJson(elemental) {
         var elementalConfig = null != arguments[argumentCount] ? arguments[argumentCount] : {},
             configEntries = Object.keys(elementalConfig);
 
-        "function" == typeof Object.getOwnPropertySymbols && (configEntries = configEntries.concat(Object.getOwnPropertySymbols(elementalConfig).filter(function (configKey) {
-            return Object.getOwnPropertyDescriptor(elementalConfig, configKey).enumerable
-        }))), configEntries.forEach(function (key) {
+        if (typeof Object.getOwnPropertySymbols == "function") {
+            configEntries = configEntries.concat(Object.getOwnPropertySymbols(elementalConfig).filter(function (configKey) {
+                return Object.getOwnPropertyDescriptor(elementalConfig, configKey).enumerable
+            }))
+        }
+
+        configEntries.forEach(function (key) {
             setElementalData(elemental, key, elementalConfig[key])
         })
     }
+
     return elemental
 }
 
@@ -248,8 +246,6 @@ function isFunction(variable) {
  * Get the elemental config property
  *
  * @param elemental
- *
- * @returns {{elemental: *, getOptionsForConfig: (function(*, *=, *=): {elementalOptions: *, elemental: *, elementalName: *, id: *, isActiveOn: *}), configProperty: string, resultFilter: *}}
  */
 function getElementalConfigProperty(elemental) {
     return [{
@@ -283,10 +279,10 @@ function getElementalsInContext(context) {
 function pauseElemental(elemental, name, responsiveElemental)
 {
     try {
-        responsiveElemental.pause(),
-            Events.publish(elemental, elementalPausedEvent, {
-                instance: responsiveElemental
-            })
+        responsiveElemental.pause();
+        Events.publish(elemental, elementalPausedEvent, {
+            instance: responsiveElemental
+        });
     } catch (e) {
         console.log(`A error occurred attempting to pause elemental: ${name}`)
     }
@@ -303,12 +299,8 @@ function destroyElemental(elemental, name, responsiveElemental)
 {
     // Trigger destroy function
     responsiveElemental.destroy();
-
-    // Publish deletion event
     Events.publish(elemental, elementalDestroyedEvent, {instance: responsiveElemental});
-
-    // Remove from our storage
-    elementalStorage.remove(elemental, name, responsiveElemental);
+    Collection.remove(elemental, name, responsiveElemental);
 }
 
 /**
@@ -323,9 +315,8 @@ function resumeElemental(obj, elemental)
     try {
         obj.resume();
         return updateElementalJson({}, elemental, {
-                processed: true
-            })
-        // Resuming failed, to minimize damage, disable it
+            processed: true
+        });
     } catch (error) {
         console.log(`A error occurred attempting to resume elemental: ${elemental.name}`);
         return updateElementalJson({}, elemental, {
@@ -358,14 +349,13 @@ function createElemental(config, tag, options, id)
 function destroyResponsiveElemental(elemental, settings)
 {
     // Get the responsively wrapped elemental
-    var responsiveElemental = elementalStorage.getById(elemental, settings.name, settings.id);
+    var responsiveElemental = Collection.getById(elemental, settings.name, settings.id);
 
-    // If it doesnt exits, just exit
-    if (!responsiveElemental) return settings;
+    if (!responsiveElemental)
+        return settings;
 
     // Try to destroy the elemental
-    if (responsiveElemental.destroy)
-    {
+    if (responsiveElemental.destroy) {
         destroyElemental(elemental, settings.name, responsiveElemental);
         return updateElementalJson({}, settings, {
             processed: void 0
@@ -373,8 +363,7 @@ function destroyResponsiveElemental(elemental, settings)
     }
 
     // Try to pause the elemental
-    if (responsiveElemental.pause)
-    {
+    if (responsiveElemental.pause) {
         pauseElemental(elemental, settings.name, responsiveElemental);
         return updateElementalJson({}, settings, {
             processed: void 0
@@ -408,9 +397,14 @@ function cleanElemental(elemental) {
 function deleteElemental(elementals) {
     try {
         var elementalConfig = JSON.parse(elementals.getAttribute(elementalDataTag));
-        Array.isArray(elementalConfig) || (elementalConfig = [elementalConfig]), elementalConfig.forEach(function (elemental) {
-            delete elemental.processed, delete elemental.id
-        }), elementals.setAttribute(elementalDataTag, JSON.stringify(elementalConfig))
+        Array.isArray(elementalConfig) || (elementalConfig = [elementalConfig]);
+
+        elementalConfig.forEach(function (elemental) {
+            delete elemental.processed;
+            delete elemental.id
+        });
+
+        elementals.setAttribute(elementalDataTag, JSON.stringify(elementalConfig))
     } catch (error) {
     }
 }
@@ -425,7 +419,7 @@ function deleteElemental(elementals) {
  */
 function resumeElementalByID(tag, elemental)
 {
-    return resumeElemental(elementalStorage.getById(tag, elemental.name, elemental.id), elemental);
+    return resumeElemental(Collection.getById(tag, elemental.name, elemental.id), elemental);
 }
 
 /**
@@ -554,16 +548,5 @@ export default {
      */
     destroyElementals: function (context) {
         getElementalsInContext(context).map(cleanElemental)
-    },
-
-    /**
-     * Reset elementals in context
-     *
-     * @param context
-     */
-    resetElementals: function (context) {
-        var elementals = getElementalsInContext(context);
-        elementals.hasAttribute(elementalDataTag) && elementalStorage.push(context),
-            elementalStorage.forEach(deleteElemental)
     }
 }

@@ -10,8 +10,7 @@ var viewport;
  * @param namespace
  * @returns {boolean}
  */
-function windowHasOffset(namespace) {
-    // Start calculating the data required to check for offsets accordingly
+export function windowHasOffset(namespace) {
     var viewContext = Object(jQuery)(namespace),
         globalContext = Object(jQuery)(window),
         heightOffset = globalContext.scrollTop(),
@@ -36,15 +35,14 @@ function windowHasOffset(namespace) {
  *
  * @type {string}
  */
-var responsiveViewChangeEventName = "global.responsiveViewChanged";
-
+export var responsiveEvent = "global.responsiveViewChanged";
 
 /**
  * Calculate the current viewport (expensive)
  *
  * @returns {string}
  */
-function calculateViewport() {
+export function calculateViewport() {
     // Initialize variables
     var trackingElem = document.createElement("span"),
         previousViewport = viewport;
@@ -52,14 +50,15 @@ function calculateViewport() {
     trackingElem.className = "responsive-tracking";
     document.body.appendChild(trackingElem);
 
-    if (createTrackingElement(trackingElem, "responsive-tracking--visible-on-large-desktop"))
+    if (createTrackingElement(trackingElem, "responsive-tracking--visible-on-large-desktop")) {
         viewport = viewports.DESKTOP_LARGE;
-    else if (createTrackingElement(trackingElem, "responsive-tracking--visible-on-desktop"))
+    } else if (createTrackingElement(trackingElem, "responsive-tracking--visible-on-desktop")) {
         viewport = viewports.DESKTOP;
-    else if (createTrackingElement(trackingElem, "responsive-tracking--visible-on-tablet"))
+    } else if (createTrackingElement(trackingElem, "responsive-tracking--visible-on-tablet")) {
         viewport = viewports.TABLET;
-    else
+    } else {
         viewport = viewports.MOBILE;
+    }
 
     document.body.removeChild(trackingElem);
 
@@ -71,7 +70,7 @@ function calculateViewport() {
         };
 
         // Trigger events
-        Events.publish(Events, responsiveViewChangeEventName, publishData);
+        Events.publish(Events, responsiveEvent, publishData);
         Object(jQuery)(window).trigger("elementals:viewport:change", publishData);
     }
 
@@ -87,10 +86,10 @@ function calculateViewport() {
 function createTrackingElement(context, className) {
     var spanElem = document.createElement("span");
 
-    // Return true if offset height/width is greater than 0
-    return spanElem.className = className,
-        context.appendChild(spanElem),
-        spanElem.offsetWidth > 0 && spanElem.offsetHeight > 0
+    spanElem.className = className;
+    context.appendChild(spanElem);
+
+    return spanElem.offsetWidth > 0 && spanElem.offsetHeight > 0
 }
 
 /**
@@ -98,13 +97,6 @@ function createTrackingElement(context, className) {
  *
  * @returns {*|string}
  */
-function getViewport() {
+export function getViewport() {
     return viewport || calculateViewport()
-}
-
-export {
-    windowHasOffset,
-    responsiveViewChangeEventName as default,
-    calculateViewport,
-    getViewport
 }

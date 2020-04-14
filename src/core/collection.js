@@ -14,48 +14,71 @@ function getElementalStorage(namespace, name) {
 }
 
 /**
- * Functions that are used to mutate all stored elementals
- *
- * @returns {{add: add, getById: (function(*=, *=, *): T | null), getByName: (function(*=, *=): T | null), getAllForElement: (function(*=, *=): [*]|[]), remove: remove}}
+ * Get all elementals from a given namespace
+ * @param storage
+ * @param name
+ * @returns {*}
  */
-export default function() {
-    return {
-        getAllForElement: function(storage, name) {
-            return getElementalStorage(storage, name)
-        },
+export function getAllForElement(storage, name) {
+    return getElementalStorage(storage, name)
+}
 
-        getById: function(storage, name, id) {
-            return getElementalStorage(storage, name).filter(function (listItem) {
-                return listItem.id === id
-            }).shift() || null
-        },
+/**
+ * Get elemental by processed ID from a given namespace
+ * @param storage
+ * @param name
+ * @param id
+ * @returns {*|null}
+ */
+export function getById(storage, name, id) {
+    return getElementalStorage(storage, name).filter(function (listItem) {
+        return listItem.id === id
+    }).shift() || null
+}
 
-        getByName: function(storage, name) {
-            return getElementalStorage(storage, name).shift() || null
-        },
+/**
+ * Get elemental by name from a given namespace
+ * @param storage
+ * @param name
+ * @returns {*|null}
+ */
+export function getByName(storage, name) {
+    return getElementalStorage(storage, name).shift() || null
+}
 
-        add: function(storage, name, toAdd) {
-            var ElementalStorage = Object(jQuery)(storage),
-                arrayMap = getElementalStorage(storage, name);
+/**
+ * Add an elemental to a given namespace
+ * @param storage
+ * @param name
+ * @param toAdd
+ */
+export function add(storage, name, toAdd) {
+    var ElementalStorage = Object(jQuery)(storage),
+        arrayMap = getElementalStorage(storage, name);
 
-            if (arrayMap.length) {
-                arrayMap.includes(toAdd) || ElementalStorage.data("elementals." . concat(name), [].concat(arrayMap, toAdd))
-            } else {
-                ElementalStorage.data("elementals." . concat(name), toAdd)
-            }
-        },
+    if (arrayMap.length) {
+        arrayMap.includes(toAdd) || ElementalStorage.data("elementals." . concat(name), [] . concat(arrayMap, toAdd))
+    } else {
+        ElementalStorage.data("elementals." . concat(name), toAdd)
+    }
+}
 
-        remove: function(storage, name, toRemove) {
-            var ElementalStorage = Object(jQuery)(storage),
-                arrayMap = getElementalStorage(storage, name);
+/**
+ * Remove an elemental from a given namespace
+ * @param storage
+ * @param name
+ * @param toRemove
+ */
+export function remove(storage, name, toRemove) {
+    var ElementalStorage = Object(jQuery)(storage),
+        arrayMap = getElementalStorage(storage, name);
 
-            if (!toRemove || 1 === arrayMap.length && arrayMap[0] === toRemove) {
-                ElementalStorage.removeData("elementals." . concat(name))
-            } else {
-                ElementalStorage.data("elementals." . concat(name)), arrayMap.filter(function (item) {
-                    return item !== toRemove
-                });
-            }
-        }
+    if (!toRemove || 1 === arrayMap.length && arrayMap[0] === toRemove) {
+        ElementalStorage.removeData("elementals." . concat(name))
+    } else {
+        ElementalStorage.data("elementals." . concat(name));
+        arrayMap.filter(function (item) {
+            return item !== toRemove
+        });
     }
 }

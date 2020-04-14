@@ -1,9 +1,7 @@
-var storage = new WeakMap(),
-    ret;
+var storage = new WeakMap();
 
 /**
  * Put something into our data store
- *
  * @param element
  * @param key
  * @param obj
@@ -17,10 +15,8 @@ export function put(element, key, obj) {
 
 /**
  * Get something from our data store
- *
  * @param element
  * @param key
- *
  * @returns {*}
  */
 export function get(element, key) {
@@ -41,14 +37,12 @@ export function has(element, key) {
 
 /**
  * Remove something from our data store
- *
  * @param element
  * @param key
- *
  * @returns {boolean | void | Promise<boolean> | IDBRequest<undefined>}
  */
 export function remove(element, key) {
-    ret = storage.get(element).delete(key);
+    var ret = storage.get(element).delete(key);
     if (!storage.get(element).size === 0) {
         storage.delete(element);
     }

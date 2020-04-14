@@ -1,11 +1,23 @@
-var MOBILE = "mobile",
-    TABLET = "tablet",
-    DESKTOP = "desktop",
-    DESKTOP_LARGE = "large-desktop";
+/**
+ * Mobile viewport
+ * @type {string}
+ */
+export var MOBILE = "mobile";
 
-export {
-    MOBILE,
-    TABLET,
-    DESKTOP,
-    DESKTOP_LARGE
-}
+/**
+ * Tablet viewport
+ * @type {string}
+ */
+export var TABLET = "tablet";
+
+/**
+ * Desktop viewport
+ * @type {string}
+ */
+export var DESKTOP = "desktop";
+
+/**
+ * Large desktop viewport
+ * @type {string}
+ */
+export var DESKTOP_LARGE = "large-desktop";

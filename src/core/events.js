@@ -12,20 +12,20 @@ var eventToken = 0,
  * @returns {number}
  */
 function subscribe(subject, event, callback, clientId) {
-    // Callback needs to be a function
-    if ("function" != typeof callback) return -1;
+    if ("function" != typeof callback)
+        return -1;
 
-    // Increment the new client token by 1 for the next client
     var newClientToken = ++eventToken;
 
-    // Push the event and return the new client token after success
-    return subscriptionList.push({
+    subscriptionList.push({
         subject: subject,
         event: event,
         token: eventToken,
         clientId: clientId,
         callback: callback
-    }), newClientToken;
+    });
+
+    return newClientToken;
 }
 
 /**
@@ -38,7 +38,8 @@ function subscribe(subject, event, callback, clientId) {
  */
 function subscribeOnce(subject, event, callback, clientId) {
     var subscription = subscribe(subject, event, function (toPublish) {
-        callback(toPublish), unsubscribe(subscription)
+        callback(toPublish);
+        unsubscribe(subscription)
     }, clientId);
 }
 

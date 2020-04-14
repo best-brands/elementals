@@ -7,12 +7,9 @@
  * @returns {CustomEvent}
  */
 export default function eventCreator(eventName, params) {
-    var _bubbles = params.bubbles,
-        bubbles = void 0 !== _bubbles && _bubbles,
-        _cancelable = params.cancelable,
-        cancelable = void 0 !== _cancelable && _cancelable,
-        _detail = params.detail,
-        detail = void 0 === _detail ? {} : _detail;
+    var bubbles = void 0 !== params.bubbles && params.bubbles,
+        cancelable = void 0 !== params.cancelable && params.cancelable,
+        detail = void 0 === params.detail ? {} : params.detail;
 
     if ("function" == typeof CustomEvent) return new CustomEvent(eventName, {
         bubbles: bubbles,
@@ -21,8 +18,9 @@ export default function eventCreator(eventName, params) {
     });
 
     var createdEvent = document.createEvent("CustomEvent");
+    createdEvent.initCustomEvent(eventName, bubbles, cancelable, detail);
 
-    return createdEvent.initCustomEvent(eventName, bubbles, cancelable, detail), createdEvent
+    return createdEvent
 }
 
 /**
@@ -142,13 +140,17 @@ export function eventFactory(selector, callback) {
                     }
                 };
 
-                for (var eventProperty in event) eventPropertyParser(eventProperty);
+                for (var eventProperty in event) {
+                    if (event.hasOwnProperty(eventProperty))
+                        eventPropertyParser(eventProperty);
+                }
 
                 Object.setPrototypeOf(eventProperties, event);
-
-                return Object.keys(options).forEach(function (property) {
+                Object.keys(options).forEach(function (property) {
                     eventProperties[property] = options[property]
-                }), eventProperties
+                });
+
+                return eventProperties
 
             }(event, {currentTarget: closestEventTarget}))
         }

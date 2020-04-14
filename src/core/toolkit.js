@@ -6,10 +6,6 @@
  *
  * @returns {*}
  */
-function selectAll(selector, context = document) {
+export function selectAll(selector, context = document) {
     return [...context.querySelectorAll(selector)]
-}
-
-export {
-    selectAll
 }
