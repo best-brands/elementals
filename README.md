@@ -42,8 +42,9 @@ Add the following css to the head of your body in order for the `activeOn` prope
 
 ## Usage
 
-The power of Elemental is that it can easily enrich your content without requiring janky code solutions whenever you
-have a multiple of the same piece of enriched HTML.
+The power of Elemental components is that it can easily enrich your content without requiring janky code solutions
+whenever you are in need of re-usable components. Besides, it also makes name-spacing your components very easy, which
+means that if one does crash, it will log the error but load the rest of the components nonetheless.
 
 Initializing an Elemental is really easy:
 
@@ -91,7 +92,7 @@ For optional parameters, you can pass the following json content with anything y
 }
 ```
 
-You can also initialize multiple elementals on the same element :O
+You can also initialize multiple elementals on the same element:
 
 ```json
 [
