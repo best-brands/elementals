@@ -257,8 +257,7 @@ function getElementalsInContext(context) {
  * @param name
  * @param responsiveElemental
  */
-function pauseElemental(elemental, name, responsiveElemental)
-{
+function pauseElemental(elemental, name, responsiveElemental) {
     try {
         responsiveElemental.pause();
         Events.publish(elemental, elementalPausedEvent, {
@@ -275,8 +274,7 @@ function pauseElemental(elemental, name, responsiveElemental)
  * @param name
  * @param responsiveElemental
  */
-function destroyElemental(elemental, name, responsiveElemental)
-{
+function destroyElemental(elemental, name, responsiveElemental) {
     // Trigger destroy function
     responsiveElemental.destroy();
     Events.publish(elemental, elementalDestroyedEvent, {instance: responsiveElemental});
@@ -289,8 +287,7 @@ function destroyElemental(elemental, name, responsiveElemental)
  * @param elemental
  * @returns {*}
  */
-function resumeElemental(obj, elemental)
-{
+function resumeElemental(obj, elemental) {
     try {
         obj.resume();
         return updateElementalJson({}, elemental, {
@@ -311,8 +308,7 @@ function resumeElemental(obj, elemental)
  * @param options
  * @param id
  */
-function createElemental(config, tag, options, id)
-{
+function createElemental(config, tag, options, id) {
     var namespace = config(Object(jQuery)(tag), options);
     namespace && (namespace.id = id);
 }
@@ -323,8 +319,7 @@ function createElemental(config, tag, options, id)
  * @param settings
  * @returns {*}
  */
-function destroyResponsiveElemental(elemental, settings)
-{
+function destroyResponsiveElemental(elemental, settings) {
     // Get the responsively wrapped elemental
     var responsiveElemental = Collection.getById(elemental, settings.name, settings.id);
 
@@ -392,8 +387,7 @@ function deleteElemental(elementals) {
  *
  * @returns {*|undefined}
  */
-function resumeElementalByID(tag, elemental)
-{
+function resumeElementalByID(tag, elemental) {
     return resumeElemental(Collection.getById(tag, elemental.name, elemental.id), elemental);
 }
 
@@ -408,8 +402,7 @@ function resumeElementalByID(tag, elemental)
  *
  * @returns {*}
  */
-function bootElemental(config, tag, options, id, elemental)
-{
+function bootElemental(config, tag, options, id, elemental) {
     try {
         createElemental(config, tag, options, id);
         return updateElementalJson({}, elemental, {
@@ -435,8 +428,7 @@ function bootElemental(config, tag, options, id, elemental)
  *
  * @returns {{processed}|*}
  */
-function initElemental(tag, elementalsToInitialize, elemental, elementalId)
-{
+function initElemental(tag, elementalsToInitialize, elemental, elementalId) {
     // Check if its already been processed, if so, skip
     if (elemental.processed)
         return elemental;
@@ -486,8 +478,7 @@ function initElemental(tag, elementalsToInitialize, elemental, elementalId)
  * @param elementalsTag
  * @param elementalsToInitialise
  */
-function initElementals(elementalsTag, elementalsToInitialise)
-{
+function initElementals(elementalsTag, elementalsToInitialise) {
     var config = parseElemental(elementalsTag),
         newConfig = config.map(function(elemental, index) {
             return initElemental(elementalsTag, elementalsToInitialise, elemental, elemental.id || String(index));

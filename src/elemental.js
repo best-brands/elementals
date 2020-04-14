@@ -9,7 +9,6 @@ import jQuery from "jquery";
  * @param factory
  * @param defaults
  */
-
 function checkArguments(name, factory, defaults) {
     if ("string" != typeof name) throw new Error(`Create elemental: elemental name should be a non empty string`);
     if ("function" != typeof factory) throw new Error(`Create elemental: elemental factory should be a function`);

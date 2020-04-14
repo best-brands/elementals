@@ -51,6 +51,10 @@ export function unsubscribe(clientId) {
     });
 }
 
+/**
+ * Unsubscribe from all events
+ * @param clientId
+ */
 export function unsubscribeAll(clientId) {
     subscriptionList = subscriptionList.filter(function (subscription) {
         return subscription.clientId !== clientId
