@@ -1,4 +1,4 @@
-import {default as elemental} from './elemental';
+import {default as Elemental} from './elemental';
 import * as Collection from './core/collection';
 import * as ResponsiveController from './core/responsiveController';
 import * as Events from './core/events';
@@ -10,7 +10,7 @@ var elementalDataTag = 'data-elemental',
     elementalPausedEvent = "instance paused";
 
 // Responsive wrapper to which elementals should oblige
-var responsiveElemental = Object(elemental)("responsiveController", function (name, settings) {
+var responsiveElemental = Elemental("responsiveController", function (name, settings) {
     var elemental,
         subscription,
         paused = false;
@@ -38,7 +38,7 @@ var responsiveElemental = Object(elemental)("responsiveController", function (na
      * @returns {boolean}
      */
     function isViewportActive() {
-        var viewport = Object(ResponsiveController.getViewport)();
+        var viewport = ResponsiveController.getViewport();
         if (void 0 === settings.isActiveOn)
             return false;
         return -1 !== settings.isActiveOn.indexOf(viewport)
@@ -248,7 +248,7 @@ function getElementalConfigProperty(elemental) {
  * @returns {*}
  */
 function getElementalsInContext(context) {
-    return Object(toolkit.selectAll)(`[${elementalDataTag}]`, context)
+    return toolkit.selectAll(`[${elementalDataTag}]`, context)
 }
 
 /**
@@ -309,7 +309,7 @@ function resumeElemental(obj, elemental) {
  * @param id
  */
 function createElemental(config, tag, options, id) {
-    var namespace = config(Object(jQuery)(tag), options);
+    var namespace = config(jQuery(tag), options);
     namespace && (namespace.id = id);
 }
 
@@ -358,25 +358,6 @@ function cleanElemental(elemental) {
         newJson = JSON.stringify(newConfig);
 
     JSON.stringify(config) !== newJson && elemental.setAttribute(elementalDataTag, newJson)
-}
-
-/**
- * Delete elemental
- * @param elementals
- */
-function deleteElemental(elementals) {
-    try {
-        var elementalConfig = JSON.parse(elementals.getAttribute(elementalDataTag));
-        Array.isArray(elementalConfig) || (elementalConfig = [elementalConfig]);
-
-        elementalConfig.forEach(function (elemental) {
-            delete elemental.processed;
-            delete elemental.id
-        });
-
-        elementals.setAttribute(elementalDataTag, JSON.stringify(elementalConfig))
-    } catch (error) {
-    }
 }
 
 /**

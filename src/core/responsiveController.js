@@ -11,8 +11,8 @@ var viewport;
  * @returns {boolean}
  */
 export function windowHasOffset(namespace) {
-    var viewContext = Object(jQuery)(namespace),
-        globalContext = Object(jQuery)(window),
+    var viewContext = jQuery(namespace),
+        globalContext = jQuery(window),
         heightOffset = globalContext.scrollTop(),
         totalHeight = heightOffset + globalContext.height(),
         viewHeight = viewContext.offset(),
@@ -71,7 +71,7 @@ export function calculateViewport() {
 
         // Trigger events
         Events.publish(Events, responsiveEvent, publishData);
-        Object(jQuery)(window).trigger("elementals:viewport:change", publishData);
+        jQuery(window).trigger("elementals:viewport:change", publishData);
     }
 
     return viewport;

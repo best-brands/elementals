@@ -9,7 +9,7 @@ import jQuery from 'jquery'
  * @returns {*}
  */
 function getElementalStorage(namespace, name) {
-    var list = Object(jQuery)(namespace).data(`elementals.${name}`);
+    var list = jQuery(namespace).data(`elementals.${name}`);
     return list ? Array.isArray(list) ? list : [list] : []
 }
 
@@ -53,7 +53,7 @@ export function getByName(storage, name) {
  * @param toAdd
  */
 export function add(storage, name, toAdd) {
-    var ElementalStorage = Object(jQuery)(storage),
+    var ElementalStorage = jQuery(storage),
         arrayMap = getElementalStorage(storage, name);
 
     if (arrayMap.length) {
@@ -70,7 +70,7 @@ export function add(storage, name, toAdd) {
  * @param toRemove
  */
 export function remove(storage, name, toRemove) {
-    var ElementalStorage = Object(jQuery)(storage),
+    var ElementalStorage = jQuery(storage),
         arrayMap = getElementalStorage(storage, name);
 
     if (!toRemove || 1 === arrayMap.length && arrayMap[0] === toRemove) {

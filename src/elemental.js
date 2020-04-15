@@ -49,8 +49,8 @@ function createElementalObject(elementalName, jElem, jqElem) {
 export default function (name, factory, defaults) {
     checkArguments(name, factory, defaults);
     return function (elementalNameSpace, elementalFactory) {
-        var mapped = Object(jQuery)(elementalNameSpace).toArray().map(function (elem) {
-            var elemental = createElementalObject(name, elem, Object(jQuery)(elem)),
+        var mapped = jQuery(elementalNameSpace).toArray().map(function (elem) {
+            var elemental = createElementalObject(name, elem, jQuery(elem)),
                 settings = {...defaults, ...elementalFactory};
 
             try {
