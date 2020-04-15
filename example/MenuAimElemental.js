@@ -72,8 +72,8 @@ import jQuery from 'jquery';
  *
  * https://github.com/kamens/jQuery-menu-aim
  */
-export default Object(Elemental)("MenuAim", function (component, settings) {
-    var $menu = component.$el,
+export default Object(Elemental)("MenuAim", function (elemental, settings) {
+    var $menu = elemental.$el,
         activeRow = null,
         mouseLocs = [],
         lastDelayLoc = null,
