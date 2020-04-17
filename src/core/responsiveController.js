@@ -18,13 +18,15 @@ export default Elemental("responsiveController", function (name, settings) {
         // Initialize the elemental
         elemental = settings.elemental(name.el, settings.elementalOptions);
 
-        if (!elemental || elemental instanceof HTMLElement)
+        if (!elemental || elemental instanceof HTMLElement) {
             elemental = Storage.get(name.el, `elementals.${settings.elementalName}`);
+        }
 
-        if (elemental)
+        if (elemental) {
             elemental.id = settings.id;
-        else
+        } else {
             console.debug(`Expected instance of ${settings.elementalName} is not available.`);
+        }
     }
 
     /**
@@ -42,7 +44,7 @@ export default Elemental("responsiveController", function (name, settings) {
      * Bootstrap the manager
      * @returns {*}
      */
-    function bootstrapper() {
+    function responsiveEventHandler() {
         if (!isViewportActive()) {
             // If we dont have a elemental or its paused, return
             if (!elemental || paused)
@@ -73,15 +75,19 @@ export default Elemental("responsiveController", function (name, settings) {
         }
     }
 
-    function cleanElemental(publishData) {
-        if (elemental === publishData.instance) {
+    /**
+     * The elemental destroy handler
+     * @param event
+     */
+    function elementalDestroyHandler(event) {
+        if (elemental === event.instance) {
             Events.unsubscribe(subscription);
             elemental = void 0;
             paused = false;
         }
     }
 
-    subscription = Events.subscribe(Events, Viewport.responsiveEvent, bootstrapper);
-    Events.subscribeOnce(name.el, ElementalEvents.ELEMENTAL_DESTROYED_EVENT, cleanElemental);
-    bootstrapper();
+    subscription = Events.subscribe(Events, Viewport.responsiveEvent, responsiveEventHandler);
+    Events.subscribeOnce(name.el, ElementalEvents.ELEMENTAL_DESTROYED_EVENT, elementalDestroyHandler);
+    responsiveEventHandler();
 });

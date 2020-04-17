@@ -26,10 +26,8 @@ export function get(element, key) {
 
 /**
  * Check if something exists in our data store
- *
  * @param element
  * @param key
- *
  * @returns {boolean|*}
  */
 export function has(element, key) {

@@ -1,6 +1,5 @@
 /**
  * Debounce function
- *
  * @param func
  * @param wait
  * @param immediate

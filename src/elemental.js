@@ -36,9 +36,8 @@ function createElementalObject(name, elem) {
 }
 
 /**
- * Internal, extendable class for instantiating components.
- * Each component should contain functionality for a single DOM element or selector.
- *
+ * Internal, extendable class for instantiating components. Each component should contain
+ * functionality for a single DOM element or selector.
  * @param name
  * @param factory
  * @param defaults
