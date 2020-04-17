@@ -17,23 +17,7 @@ module.exports = {
         filename: '[name].js',
         crossOriginLoading: 'anonymous'
     },
-    resolve: {
-        alias: {
-            jquery: "jquery/src/jquery"
-        }
-    },
     optimization: {
-        splitChunks: {
-            cacheGroups: {
-                default: false,
-                commons: {
-                    test: /[\\/]node_modules[\\/]/,
-                    name: 'vendor',
-                    chunks: 'all',
-                    minChunks: 2
-                }
-            }
-        },
         minimizer: [
             new TerserJSPlugin({
                 sourceMap: true,
@@ -53,9 +37,7 @@ module.exports = {
                 use: {
                     loader: 'babel-loader'
                 },
-                exclude: [
-                    /node_modules\/(css-loader|core-js|promise-polyfill|webpack|html-webpack-plugin|whatwg-fetch)\//
-                ]
+                exclude: /node_modules/,
             },
             {
                 test: /\.html$/,
