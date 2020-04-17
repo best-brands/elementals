@@ -1,4 +1,4 @@
-import * as ResponsiveController from './responsiveController'
+import * as ResponsiveController from './viewport'
 import {default as debounce} from './debounce';
 import jQuery from "jquery";
 
