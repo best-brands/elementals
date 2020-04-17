@@ -1,10 +1,10 @@
 import * as Events from './core/events.js';
 import * as Collection from './core/collection.js';
-import jQuery from "jquery";
+import * as Storage from './core/storage';
+import * as DOMEvents from './core/DOMEvents';
 
 /**
  * Check the arguments of the elemental we are going to initialize
- *
  * @param name
  * @param factory
  * @param defaults
@@ -17,22 +17,19 @@ function checkArguments(name, factory, defaults) {
 
 /**
  * Create elemental object
- *
- * @param elementalName
- * @param jElem
- * @param jqElem
+ * @param name
+ * @param elem
  */
-function createElementalObject(elementalName, jElem, jqElem) {
+function createElementalObject(name, elem) {
     var eventSubscription = Events.getClient();
 
     return {
-        name: elementalName,
-        el: jElem,
-        $el: jqElem,
+        name: name,
+        el: elem,
         destroy: function () {
             eventSubscription.unsubscribeAll();
-            jqElem.removeData(`elementals.${elementalName}`);
-            jqElem.off(`.${elementalName}`);
+            Storage.remove(elem, `elementals.${name}`);
+            DOMEvents.clearEventListeners(elem);
         },
         pubSubClient: eventSubscription
     }
@@ -49,14 +46,14 @@ function createElementalObject(elementalName, jElem, jqElem) {
 export default function (name, factory, defaults) {
     checkArguments(name, factory, defaults);
     return function (elementalNameSpace, elementalFactory) {
-        var mapped = jQuery(elementalNameSpace).toArray().map(function (elem) {
-            var elemental = createElementalObject(name, elem, jQuery(elem)),
+        var mapped = elementalNameSpace.toArray().map(function (elem) {
+            var elemental = createElementalObject(name, elem),
                 settings = {...defaults, ...elementalFactory};
 
             try {
-                var initializedElemental = factory(elemental, settings) || {};
-                Collection.add(elem, name, initializedElemental);
-                return initializedElemental
+                var instance = factory(elemental, settings) || {};
+                Collection.add(elem, name, instance);
+                return instance
             } catch (error) {
                 throw error
             }

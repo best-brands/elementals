@@ -1,6 +1,6 @@
 import * as Events from './events';
-import jQuery from 'jquery';
 import * as viewports from './viewports';
+import * as Toolkit from './toolkit'
 
 var viewport;
 
@@ -11,11 +11,9 @@ var viewport;
  * @returns {boolean}
  */
 export function windowHasOffset(namespace) {
-    var viewContext = jQuery(namespace),
-        globalContext = jQuery(window),
-        heightOffset = globalContext.scrollTop(),
-        totalHeight = heightOffset + globalContext.height(),
-        viewHeight = viewContext.offset(),
+    var heightOffset = window.scrollTop(),
+        totalHeight = heightOffset + Toolkit.height(window),
+        viewHeight = namespace.getBoundingClientRect(),
         hasOffset = false;
 
     // If we have no height, there can be no offset
@@ -24,7 +22,7 @@ export function windowHasOffset(namespace) {
 
     var topOffset = viewHeight.top;
 
-    if (topOffset + viewContext.height() >= heightOffset && topOffset <= totalHeight)
+    if (topOffset + Toolkit.height(namespace) >= heightOffset && topOffset <= totalHeight)
         hasOffset = true;
 
     return hasOffset
@@ -71,7 +69,6 @@ export function calculateViewport() {
 
         // Trigger events
         Events.publish(Events, responsiveEvent, publishData);
-        jQuery(window).trigger("elementals:viewport:change", publishData);
     }
 
     return viewport;

@@ -2,7 +2,6 @@ import * as Collection from './core/collection';
 import * as Events from './core/events';
 import * as toolkit from './core/toolkit';
 import {default as ResponsiveControllerElemental} from './core/responsiveController';
-import jQuery from 'jquery';
 import * as elementalEvents from "./core/elementalEvents";
 
 var elementalDataTag = 'data-elemental';
@@ -225,7 +224,7 @@ function resumeElemental(obj, elemental) {
  * @param id
  */
 function createElemental(config, tag, options, id) {
-    var namespace = config(jQuery(tag), options);
+    var namespace = config(tag, options);
     namespace && (namespace.id = id);
 }
 

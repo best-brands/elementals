@@ -1,9 +1,8 @@
 import {default as Elemental} from "../elemental";
 import * as ElementalEvents from "./elementalEvents";
 import * as Events from "./events";
-import jQuery from "jquery";
+import * as Storage from "./storage";
 import * as Viewport from "./viewport";
-
 
 export default Elemental("responsiveController", function (name, settings) {
     var elemental,
@@ -17,10 +16,10 @@ export default Elemental("responsiveController", function (name, settings) {
         if (elemental) return;
 
         // Initialize the elemental
-        elemental = settings.elemental(name.$el, settings.elementalOptions);
+        elemental = settings.elemental(name.el, settings.elementalOptions);
 
-        if (!elemental || elemental instanceof jQuery)
-            elemental = name.$el.data(`elementals.${settings.elementalName}`);
+        if (!elemental || elemental instanceof HTMLElement)
+            elemental = Storage.get(name.el, `elementals.${settings.elementalName}`);
 
         if (elemental)
             elemental.id = settings.id;
