@@ -27,19 +27,10 @@ import {Elemental} from "../index";
  * experience is hopefully similar to amazon.com/'s "Shop by Department"
  * dropdown.
  *
- * Use like so:
- *
- *      $("#menu").menuAim({
- *          activate: $.noop,  // fired on row activation
- *          deactivate: $.noop  // fired on row deactivation
- *      });
- *
- *  ...to receive events when a menu's row has been purposefully (de)activated.
- *
  * The following options can be passed to menuAim. All functions execute with
  * the relevant row's HTML element as the execution context ('this'):
  *
- *      .menuAim({
+ *      {
  *          // Function to call when a row is purposefully activated. Use this
  *          // to show a submenu's content for the activated row.
  *          activate: function() {},
@@ -67,7 +58,7 @@ import {Elemental} from "../index";
  *          // Direction the submenu opens relative to the main menu. Can be
  *          // left, right, above, or below. Defaults to "right".
  *          submenuDirection: "right"
- *      });
+ *      }
  *
  * https://github.com/kamens/jQuery-menu-aim
  */
@@ -77,26 +68,32 @@ export default Elemental("MenuAim", function (elemental, settings) {
         mouseLocs = [],
         lastDelayLoc = null,
         timeoutId = null,
-        options = {...{
-            rowSelector: "> li",
-            submenuSelector: "*",
-            submenuDirection: "right",
-            tolerance: 75, // bigger = more forgiving when entering submenu
-            enter: function () {},
-            exit: function () {},
-            activate: function () {},
-            deactivate: function () {},
-            exitMenu:function () {}
-        }, ...settings};
+        options = {
+            ...{
+                rowSelector: "> li",
+                submenuSelector: "*",
+                submenuDirection: "right",
+                tolerance: 75, // bigger = more forgiving when entering submenu
+                enter: function () {},
+                exit: function () {},
+                activate: function () {},
+                deactivate: function () {},
+                exitMenu: function () {}
+            }, ...settings
+        };
 
     const MOUSE_LOCS_TRACKED = 3, // number of past mouse locations to track
         DELAY = 300;  // ms delay when user appears to be entering submenu
 
     /**
      * Keep track of the last few locations of the mouse.
+     * @param event
      */
-    function mousemoveDocument(e) {
-        mouseLocs.push({x: e.pageX, y: e.pageY});
+    function mousemoveDocument(event) {
+        mouseLocs.push({
+            x: event.pageX,
+            y: event.pageY
+        });
 
         if (mouseLocs.length > MOUSE_LOCS_TRACKED) {
             mouseLocs.shift();
@@ -151,6 +148,7 @@ export default Elemental("MenuAim", function (elemental, settings) {
 
     /**
      * Activate a menu row.
+     * @param row
      */
     function activate(row) {
         if (row === activeRow) {
@@ -169,12 +167,13 @@ export default Elemental("MenuAim", function (elemental, settings) {
      * Possibly activate a menu row. If mouse movement indicates that we
      * shouldn't activate yet because user may be trying to enter
      * a submenu's content, then delay and check again later.
+     * @param row
      */
     function possiblyActivate(row) {
         var delay = activationDelay();
 
         if (delay) {
-            timeoutId = setTimeout(function() {
+            timeoutId = setTimeout(function () {
                 possiblyActivate(row);
             }, delay);
         } else {
@@ -182,6 +181,12 @@ export default Elemental("MenuAim", function (elemental, settings) {
         }
     }
 
+    /**
+     * Check if a selector matches
+     * @param el
+     * @param selector
+     * @returns {*}
+     */
     function matchesSelector(el, selector) {
         return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector);
     }
