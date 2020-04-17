@@ -54,7 +54,6 @@ import {Elemental, ElementalManager, Install} from 'src/elemental';
 var elemental = Object(Elemental)("someElemental", function (elemental, options) {
     // You get access to an object with access to the current DOM you are working in.
     // .el is the javascript context
-    // .$el is the jQuery context
     // .pubSubClient is the event manager subscription
     // .destroy is the removal callable
     // .name is the current elemental name
@@ -69,11 +68,11 @@ var elemental = Object(Elemental)("someElemental", function (elemental, options)
 
 ElementalManager.initElementals({
     someElemental: elemental
-}, document)
+}, document);
 
 // bind resize events (we do this after initializing the elementals
 // to avoid page jumping when we are still initializing elementals.
-Install()
+Install();
 ```
 
 ```html
