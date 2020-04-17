@@ -44,7 +44,7 @@ export function has(element, key) {
  */
 export function remove(element, key) {
     var ret = storage.get(element).delete(key);
-    if (!storage.get(element).size === 0) {
+    if (storage.get(element).size === 0) {
         storage.delete(element);
     }
     return ret;
