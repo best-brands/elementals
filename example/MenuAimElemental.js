@@ -1,8 +1,7 @@
 import {Elemental} from "../index";
-import jQuery from 'jquery';
 
 /**
- * menu-aim is a jQuery plugin for dropdown menus that can differentiate
+ * menu-aim is an elemental plugin for dropdown menus that can differentiate
  * between a user trying hover over a dropdown item vs trying to navigate into
  * a submenu's contents.
  *
@@ -73,7 +72,7 @@ import jQuery from 'jquery';
  * https://github.com/kamens/jQuery-menu-aim
  */
 export default Elemental("MenuAim", function (elemental, settings) {
-    var $menu = elemental.$el,
+    var menu = elemental.el,
         activeRow = null,
         mouseLocs = [],
         lastDelayLoc = null,
@@ -83,11 +82,11 @@ export default Elemental("MenuAim", function (elemental, settings) {
             submenuSelector: "*",
             submenuDirection: "right",
             tolerance: 75, // bigger = more forgiving when entering submenu
-            enter: jQuery.noop,
-            exit: jQuery.noop,
-            activate: jQuery.noop,
-            deactivate: jQuery.noop,
-            exitMenu: jQuery.noop
+            enter: function () {},
+            exit: function () {},
+            activate: function () {},
+            deactivate: function () {},
+            exitMenu:function () {}
         }, ...settings};
 
     const MOUSE_LOCS_TRACKED = 3, // number of past mouse locations to track
@@ -183,6 +182,10 @@ export default Elemental("MenuAim", function (elemental, settings) {
         }
     }
 
+    function matchesSelector(el, selector) {
+        return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector);
+    }
+
     /**
      * Return the amount of time that should be used as a delay before the
      * currently hovered row is activated.
@@ -192,27 +195,32 @@ export default Elemental("MenuAim", function (elemental, settings) {
      * checking again to see if the row should be activated.
      */
     function activationDelay() {
-        if (!activeRow || !$(activeRow).is(options.submenuSelector)) {
+        if (!activeRow || !matchesSelector(activeRow, options.submenuSelector)) {
             // If there is no other submenu row already active, then
             // go ahead and activate immediately.
             return 0;
         }
 
-        var offset = $menu.offset(),
-            upperLeft = {
+        var offset = menu.getBoundingClientRect();
+
+        // Set the proper offsets
+        offset.left = offset.left + document.body.scrollLeft;
+        offset.top = offset.top + document.body.scrollTop;
+
+        var upperLeft = {
                 x: offset.left,
                 y: offset.top - options.tolerance
             },
             upperRight = {
-                x: offset.left + $menu.outerWidth(),
+                x: offset.left + menu.offsetWidth,
                 y: upperLeft.y
             },
             lowerLeft = {
                 x: offset.left,
-                y: offset.top + $menu.outerHeight() + options.tolerance
+                y: offset.top + menu.offsetHeight + options.tolerance
             },
             lowerRight = {
-                x: offset.left + $menu.outerWidth(),
+                x: offset.left + menu.offsetWidth,
                 y: lowerLeft.y
             },
             loc = mouseLocs[mouseLocs.length - 1],
@@ -306,24 +314,26 @@ export default Elemental("MenuAim", function (elemental, settings) {
      * Install all event handlers for menuAim
      */
     function installEventHandlers() {
-        $menu.on("mouseleave", mouseleaveMenu)
-            .find(options.rowSelector)
-            .on("mouseenter", mouseenterRow)
-            .on("mouseleave", mouseleaveRow)
-            .on("click", clickRow);
-        jQuery(document).on("mousemove", mousemoveDocument);
+        menu.addEventListener("mouseleave", mouseleaveMenu);
+        [...menu.querySelectorAll(options.rowSelector)].forEach(function (elem) {
+            elem.addEventListener("mouseenter", mouseenterRow);
+            elem.addEventListener("mouseleave", mouseleaveRow);
+            elem.addEventListener("click", clickRow);
+        });
+        document.addEventListener("mousemove", mousemoveDocument);
     }
 
     /**
      * Uninstall all event handlers for menuAim
      */
     function uninstallEventHandlers() {
-        $menu.off("mouseleave", mouseleaveMenu)
-            .find(options.rowSelector)
-            .off("mouseenter", mouseenterRow)
-            .off("mouseleave", mouseleaveRow)
-            .off("click", clickRow);
-        jQuery(document).off("mousemove", mousemoveDocument);
+        menu.removeEventListener("mouseleave", mouseleaveMenu);
+        [...menu.querySelectorAll(options.rowSelector)].forEach(function (elem) {
+            elem.removeEventListener("mouseenter", mouseenterRow);
+            elem.removeEventListener("mouseleave", mouseleaveRow);
+            elem.removeEventListener("click", clickRow);
+        });
+        document.removeEventListener("mousemove", mousemoveDocument);
     }
 
     installEventHandlers();
