@@ -20,7 +20,8 @@ export function put(element, key, obj) {
  * @returns {*}
  */
 export function get(element, key) {
-    return storage.get(element).get(key);
+    var elemStore = storage.get(element);
+    return (elemStore) ? elemStore.get(key) : null;
 }
 
 /**

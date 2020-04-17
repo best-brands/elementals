@@ -46,7 +46,7 @@ function createElementalObject(name, elem) {
 export default function (name, factory, defaults) {
     checkArguments(name, factory, defaults);
     return function (elementalNameSpace, elementalFactory) {
-        var mapped = elementalNameSpace.toArray().map(function (elem) {
+        var mapped = ([elementalNameSpace]).map(function (elem) {
             var elemental = createElementalObject(name, elem),
                 settings = {...defaults, ...elementalFactory};
 
