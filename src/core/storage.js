@@ -20,15 +20,14 @@ export function put(element, key, obj) {
  * @returns {*}
  */
 export function get(element, key) {
-    return storage.get(element).get(key);
+    var elemStore = storage.get(element);
+    return (elemStore) ? elemStore.get(key) : null;
 }
 
 /**
  * Check if something exists in our data store
- *
  * @param element
  * @param key
- *
  * @returns {boolean|*}
  */
 export function has(element, key) {
@@ -43,7 +42,7 @@ export function has(element, key) {
  */
 export function remove(element, key) {
     var ret = storage.get(element).delete(key);
-    if (!storage.get(element).size === 0) {
+    if (storage.get(element).size === 0) {
         storage.delete(element);
     }
     return ret;

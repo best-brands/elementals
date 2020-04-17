@@ -1,102 +1,93 @@
-import * as Events from './events';
-import jQuery from 'jquery';
-import * as viewports from './viewports';
+import {default as Elemental} from "../elemental";
+import * as ElementalEvents from "./elementalEvents";
+import * as Events from "./events";
+import * as Storage from "./storage";
+import * as Viewport from "./viewport";
 
-var viewport;
+export default Elemental("responsiveController", function (name, settings) {
+    var elemental,
+        subscription,
+        paused = false;
 
-/**
- * Check if the current window has an offset
- *
- * @param namespace
- * @returns {boolean}
- */
-export function windowHasOffset(namespace) {
-    var viewContext = jQuery(namespace),
-        globalContext = jQuery(window),
-        heightOffset = globalContext.scrollTop(),
-        totalHeight = heightOffset + globalContext.height(),
-        viewHeight = viewContext.offset(),
-        hasOffset = false;
+    /**
+     * Get the requested elemental
+     */
+    function getElemental() {
+        if (elemental) return;
 
-    // If we have no height, there can be no offset
-    if (!viewHeight)
-        return hasOffset;
+        // Initialize the elemental
+        elemental = settings.elemental(name.el, settings.elementalOptions);
 
-    var topOffset = viewHeight.top;
+        if (!elemental || elemental instanceof HTMLElement) {
+            elemental = Storage.get(name.el, `elementals.${settings.elementalName}`);
+        }
 
-    if (topOffset + viewContext.height() >= heightOffset && topOffset <= totalHeight)
-        hasOffset = true;
-
-    return hasOffset
-}
-
-/**
- * Our event name
- *
- * @type {string}
- */
-export var responsiveEvent = "global.responsiveViewChanged";
-
-/**
- * Calculate the current viewport (expensive)
- *
- * @returns {string}
- */
-export function calculateViewport() {
-    // Initialize variables
-    var trackingElem = document.createElement("span"),
-        previousViewport = viewport;
-
-    trackingElem.className = "responsive-tracking";
-    document.body.appendChild(trackingElem);
-
-    if (createTrackingElement(trackingElem, "responsive-tracking--visible-on-large-desktop")) {
-        viewport = viewports.DESKTOP_LARGE;
-    } else if (createTrackingElement(trackingElem, "responsive-tracking--visible-on-desktop")) {
-        viewport = viewports.DESKTOP;
-    } else if (createTrackingElement(trackingElem, "responsive-tracking--visible-on-tablet")) {
-        viewport = viewports.TABLET;
-    } else {
-        viewport = viewports.MOBILE;
+        if (elemental) {
+            elemental.id = settings.id;
+        } else {
+            console.debug(`Expected instance of ${settings.elementalName} is not available.`);
+        }
     }
 
-    document.body.removeChild(trackingElem);
-
-    if (void 0 !== previousViewport && previousViewport !== viewport) {
-        // Event data
-        var publishData = {
-            viewport: viewport,
-            previousViewport: previousViewport
-        };
-
-        // Trigger events
-        Events.publish(Events, responsiveEvent, publishData);
-        jQuery(window).trigger("elementals:viewport:change", publishData);
+    /**
+     * Check if active on the current viewport
+     * @returns {boolean}
+     */
+    function isViewportActive() {
+        var viewport = Viewport.getViewport();
+        if (void 0 === settings.isActiveOn)
+            return false;
+        return -1 !== settings.isActiveOn.indexOf(viewport)
     }
 
-    return viewport;
-}
+    /**
+     * Bootstrap the manager
+     * @returns {*}
+     */
+    function responsiveEventHandler() {
+        if (!isViewportActive()) {
+            // If we dont have a elemental or its paused, return
+            if (!elemental || paused)
+                return;
+            if (elemental.pause) try {
+                paused = true;
+                elemental.pause();
+            } catch (error) {
+                console.debug(`An error occurred attempting to pause elemental: ${settings.elementalName}`);
+                console.debug(error);
+            } else {
+                console.debug(`Unable to pause ${settings.elementalName}, it will remain active across breakpoints as it doesnt have a breakpoint.`);
+            }
+        } else {
+            // If elemental is false, we get the elemental
+            if (!paused)
+                return void getElemental();
 
-/**
- * Create the viewport tracking element
- *
- * @param context
- * @param className
- */
-function createTrackingElement(context, className) {
-    var spanElem = document.createElement("span");
+            // We have retrieved the elemental, now try resuming it
+            if (elemental.resume) try {
+                paused = false;
+                elemental.resume();
+            } catch (error) {
+                console.debug(`An error occurred attempting to resume elemental: ${settings.elementalName}`);
+            } else {
+                console.debug(`Unable to resume ${settings.elementalName}, elemental has not implemented a "resume" method.`);
+            }
+        }
+    }
 
-    spanElem.className = className;
-    context.appendChild(spanElem);
+    /**
+     * The elemental destroy handler
+     * @param event
+     */
+    function elementalDestroyHandler(event) {
+        if (elemental === event.instance) {
+            Events.unsubscribe(subscription);
+            elemental = void 0;
+            paused = false;
+        }
+    }
 
-    return spanElem.offsetWidth > 0 && spanElem.offsetHeight > 0
-}
-
-/**
- * Get a viewport without the danger of over-calculating
- *
- * @returns {*|string}
- */
-export function getViewport() {
-    return viewport || calculateViewport()
-}
+    subscription = Events.subscribe(Events, Viewport.responsiveEvent, responsiveEventHandler);
+    Events.subscribeOnce(name.el, ElementalEvents.ELEMENTAL_DESTROYED_EVENT, elementalDestroyHandler);
+    responsiveEventHandler();
+});

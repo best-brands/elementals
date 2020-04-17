@@ -1,12 +1,11 @@
-import * as ResponsiveController from './responsiveController'
+import * as ResponsiveController from './viewport'
 import {default as debounce} from './debounce';
-import jQuery from "jquery";
+import {addEventListener} from "./DOMEvents";
 
 export default function () {
-    jQuery(function () {
-        jQuery(window).on("resize", debounce(function () {
+    (function () {
+        addEventListener(window, "resize", debounce(function () {
             ResponsiveController.calculateViewport();
-            jQuery(window).trigger("checkForMobileScriptActivation")
         }, 200, false))
-    });
+    })();
 }

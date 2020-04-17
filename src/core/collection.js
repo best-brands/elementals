@@ -1,15 +1,13 @@
-import jQuery from 'jquery'
+import * as Storage from './storage';
 
 /**
  * Gets an array from the storage namespace
- *
- * @param namespace
+ * @param elem
  * @param name
- *
  * @returns {*}
  */
-function getElementalStorage(namespace, name) {
-    var list = jQuery(namespace).data(`elementals.${name}`);
+function getElementalStorage(elem, name) {
+    var list = Storage.get(elem, `elementals.${name}`);
     return list ? Array.isArray(list) ? list : [list] : []
 }
 
@@ -53,13 +51,12 @@ export function getByName(storage, name) {
  * @param toAdd
  */
 export function add(storage, name, toAdd) {
-    var ElementalStorage = jQuery(storage),
-        arrayMap = getElementalStorage(storage, name);
+    var arrayMap = getElementalStorage(storage, name);
 
     if (arrayMap.length) {
-        arrayMap.includes(toAdd) || ElementalStorage.data(`elementals.${name}`, [] + toAdd)
+        arrayMap.includes(toAdd) || Storage.put(storage, `elementals.${name}`, toAdd)
     } else {
-        ElementalStorage.data(`elementals.${name}`, toAdd)
+        Storage.put(storage, `elementals.${name}`, toAdd)
     }
 }
 
@@ -70,13 +67,11 @@ export function add(storage, name, toAdd) {
  * @param toRemove
  */
 export function remove(storage, name, toRemove) {
-    var ElementalStorage = jQuery(storage),
-        arrayMap = getElementalStorage(storage, name);
+    var arrayMap = getElementalStorage(storage, name);
 
     if (!toRemove || 1 === arrayMap.length && arrayMap[0] === toRemove) {
-        ElementalStorage.removeData(`elementals.${name}`)
+        Storage.remove(storage, `elementals.${name}`);
     } else {
-        ElementalStorage.data(`elementals.${name}`);
         arrayMap.filter(function (item) {
             return item !== toRemove
         });
