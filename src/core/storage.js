@@ -25,6 +25,14 @@ export function get(element, key) {
 }
 
 /**
+ * Get everything of an element
+ * @returns {Map|undefined}
+ */
+export function getAll(elem) {
+    return storage.get(elem);
+}
+
+/**
  * Check if something exists in our data store
  * @param element
  * @param key

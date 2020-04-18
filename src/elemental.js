@@ -31,6 +31,12 @@ function createElementalObject(name, elem) {
             Storage.remove(elem, `elementals.${name}`);
             DOMEvents.clearEventListeners(elem);
         },
+        getInstance: function (elemental) {
+            return Storage.get(elem, `elementals.${elemental}`);
+        },
+        getInstances: function () {
+            return Storage.getAll(elem);
+        },
         pubSubClient: eventSubscription
     }
 }
