@@ -5,8 +5,7 @@ import * as Viewport from "../src/core/viewport";
 import * as Events from "../src/core/events";
 
 /**
- * Get children from given DOM section
- *
+ * Convert an HTML string to an element
  * @returns {*}
  */
 function stringToElem(html = "") {
@@ -128,16 +127,16 @@ export default Elemental("fullPageView", function (elemental, settings) {
 
     /**
      * Set the footer content of our full page view elemental
-     * @param footerContent
+     * @param content
      */
-    function setFooterContent(footerContent = null) {
+    function setFooterContent(content = null) {
         let footer = context.querySelector(".js-full-page-view-footer")
-        if (footerContent) {
+        if (content) {
             if (footer.length) {
                 while (footer.firstChild) footer.removeChild(footer.firstChild);
-                footer.appendChild(stringToElem(footerContent));
+                footer.appendChild(stringToElem(content));
             } else {
-                context.appendChild(stringToElem(`<div class="js-full-page-view-footer">${footerContent}</div>`))
+                context.appendChild(stringToElem(`<div class="js-full-page-view-footer">${content}</div>`))
             }
         } else {
             footer.parentNode.removeChild(footer);
