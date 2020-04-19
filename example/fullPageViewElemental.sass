@@ -1,0 +1,111 @@
+/* The overlay animations (this will darken the background portion) */
+@keyframes fade-in-overlay
+    0%
+        opacity: 0
+    100%
+        opacity: .65
+
+@keyframes fade-out-overlay
+    0%
+        opacity: .65
+    100%
+        opacity: 0
+
+.full-page-overlay
+    animation: fade-in-overlay .2s ease-in-out
+    background-color: #111
+    height: 100%
+    opacity: .65
+    overflow: hidden
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    z-index: 9
+
+    &.is-being-removed
+        animation: fade-out-overlay .2s ease-in-out
+
+/* Styling for our main full page view elemental. */
+.full-page-view
+    background-color: #fff
+    display: flex
+    flex-direction: column
+    height: 100%
+    left: -100%
+    overflow: hidden
+    position: fixed
+    top: 0
+    width: calc(100% - 48px)
+    z-index: 11
+
+    &--scroll-pane
+        flex: 1
+        height: 100%
+        overflow-x: hidden
+
+        &.is-scrollable
+            -webkit-overflow-scrolling: touch
+
+            [class^=grid-section]
+                -webkit-transform: translate3d(0, 0, 0)
+
+    &--main-bar
+        background-color: #000000
+        display: flex
+        flex: 4.4rem 0 0
+        justify-content: space-between
+        padding-left: .5rem
+        padding-right: .5rem
+        position: relative
+
+    &--action
+        color: #fff
+        margin-top: -.3rem
+        padding-left: .5rem
+        padding-right: .5rem
+
+        &-container
+            display: flex
+
+    &--title
+        color: #fff
+        font-size: 1.6rem
+        font-weight: 700
+        height: 100%
+        line-height: 4.4rem
+        left: 5.6rem
+        overflow: hidden
+        right: 5.6rem
+        pointer-events: none
+        position: absolute
+        text-align: center
+        text-overflow: ellipsis
+        white-space: nowrap
+
+    &--content
+        position: relative
+        transition: transform .2s ease-in
+
+    &--indented-content
+        padding: 1.2rem
+        width: 100%
+
+    &.is-transition-enabled
+        transition: all .2s ease-in-out
+
+    &.is-active
+        left: 0
+
+    &.alt-rtl
+        left: initial
+        right: -100%
+
+        &.is-active
+            right: 0
+
+        .full-page-view--main-bar
+            flex-direction: row-reverse
+
+        .full-page-view--action .icon-svg--rotate-flip
+            transform: rotate(0deg)
