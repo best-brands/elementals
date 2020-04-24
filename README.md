@@ -51,12 +51,15 @@ Initializing an Elemental is really easy:
 ```js
 import {Elemental, ElementalManager, Install} from 'src/elemental';
 
-var elemental = Object(Elemental)("someElemental", function (elemental, options) {
+let elemental = Elemental("someElemental", function (elemental, options) {
     // You get access to an object with access to the current DOM you are working in.
+    // .name is the elemental name
     // .el is the javascript context
-    // .pubSubClient is the event manager subscription
     // .destroy is the removal callable
-    // .name is the current elemental name
+    // .getInstance fetches an already instantiated instance in the current namespace
+    // .getInstances fetches all elementals in the current namespace
+    // .getInstanceFromElement fetches an elemental from another provided namespace
+    // .pubSubClient is the event manager subscription
     elemental.el.innerHTML = 'Testing some text';
 
     return {
