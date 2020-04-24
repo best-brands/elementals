@@ -7,7 +7,7 @@ import * as Storage from './storage';
  * @returns {*}
  */
 function getElementalStorage(elem, name) {
-    var list = Storage.get(elem, `elementals.${name}`);
+    let list = Storage.get(elem, `elementals.${name}`);
     return list ? Array.isArray(list) ? list : [list] : []
 }
 
@@ -51,7 +51,7 @@ export function getByName(storage, name) {
  * @param toAdd
  */
 export function add(storage, name, toAdd) {
-    var arrayMap = getElementalStorage(storage, name);
+    let arrayMap = getElementalStorage(storage, name);
 
     if (arrayMap.length) {
         arrayMap.includes(toAdd) || Storage.put(storage, `elementals.${name}`, toAdd)
@@ -67,7 +67,7 @@ export function add(storage, name, toAdd) {
  * @param toRemove
  */
 export function remove(storage, name, toRemove) {
-    var arrayMap = getElementalStorage(storage, name);
+    let arrayMap = getElementalStorage(storage, name);
 
     if (!toRemove || 1 === arrayMap.length && arrayMap[0] === toRemove) {
         Storage.remove(storage, `elementals.${name}`);

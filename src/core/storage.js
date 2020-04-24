@@ -20,7 +20,7 @@ export function put(element, key, obj) {
  * @returns {*}
  */
 export function get(element, key) {
-    var elemStore = storage.get(element);
+    let elemStore = storage.get(element);
     return (elemStore) ? elemStore.get(key) : null;
 }
 
@@ -49,7 +49,7 @@ export function has(element, key) {
  * @returns {boolean | void | Promise<boolean> | IDBRequest<undefined>}
  */
 export function remove(element, key) {
-    var ret = storage.get(element).delete(key);
+    let ret = storage.get(element).delete(key);
     if (storage.get(element).size === 0) {
         storage.delete(element);
     }

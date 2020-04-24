@@ -6,13 +6,13 @@
  * @returns {function(): *}
  */
 export default function (func, wait, immediate = false) {
-    var timeout, args, context, timestamp, result;
+    let timeout, args, context, timestamp, result;
 
     if (null == wait)
         wait = 100;
 
     function later() {
-        var last = Date.now() - timestamp;
+        let last = Date.now() - timestamp;
 
         if (last < wait && last >= 0) {
             timeout = setTimeout(later, wait - last);
@@ -25,12 +25,12 @@ export default function (func, wait, immediate = false) {
         }
     }
 
-    var debounced = function(){
+    let debounced = function(){
         context = this;
         args = arguments;
         timestamp = Date.now();
 
-        var callNow = immediate && !timeout;
+        let callNow = immediate && !timeout;
 
         if (!timeout)
             timeout = setTimeout(later, wait);

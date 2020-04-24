@@ -12,7 +12,7 @@ import * as DOMEvents from './core/DOMEvents';
 function checkArguments(name, factory, defaults) {
     if ("string" != typeof name) throw new Error(`Create elemental: elemental name should be a non empty string`);
     if ("function" != typeof factory) throw new Error(`Create elemental: elemental factory should be a function`);
-    if ("object" !== typeof(defaults) && defaults) throw new Error(`Create elemental: default options should be an object if defined`)
+    if ("object" !== typeof(defaults) && defaults) throw new Error(`Create elemental: default options should be an object if defined`);
 }
 
 /**
@@ -21,7 +21,7 @@ function checkArguments(name, factory, defaults) {
  * @param elem
  */
 function createElementalObject(name, elem) {
-    var eventSubscription = Events.getClient();
+    let eventSubscription = Events.getClient();
 
     return {
         name: name,
@@ -37,6 +37,9 @@ function createElementalObject(name, elem) {
         getInstances: function () {
             return Storage.getAll(elem);
         },
+        getInstanceFromElement: function (el, elemental) {
+            return Storage.get(el, `elementals.${elemental}`)
+        },
         pubSubClient: eventSubscription
     }
 }
@@ -51,12 +54,12 @@ function createElementalObject(name, elem) {
 export default function (name, factory, defaults) {
     checkArguments(name, factory, defaults);
     return function (elementalNameSpace, elementalFactory) {
-        var mapped = ([elementalNameSpace]).map(function (elem) {
-            var elemental = createElementalObject(name, elem),
+        let mapped = ([elementalNameSpace]).map(function (elem) {
+            let elemental = createElementalObject(name, elem),
                 settings = {...defaults, ...elementalFactory};
 
             try {
-                var instance = factory(elemental, settings) || {};
+                let instance = factory(elemental, settings) || {};
                 Collection.add(elem, name, instance);
                 return instance
             } catch (error) {

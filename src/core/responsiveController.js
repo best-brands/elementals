@@ -34,9 +34,8 @@ export default Elemental("responsiveController", function (name, settings) {
      * @returns {boolean}
      */
     function isViewportActive() {
-        var viewport = Viewport.getViewport();
-        if (void 0 === settings.isActiveOn)
-            return false;
+        let viewport = Viewport.getViewport();
+        if (void 0 === settings.isActiveOn) return false;
         return -1 !== settings.isActiveOn.indexOf(viewport)
     }
 
@@ -87,7 +86,7 @@ export default Elemental("responsiveController", function (name, settings) {
         }
     }
 
-    subscription = Events.subscribe(Events, Viewport.responsiveEvent, responsiveEventHandler);
+    subscription = Events.subscribe(Events.events, Viewport.responsiveEvent, responsiveEventHandler);
     Events.subscribeOnce(name.el, ElementalEvents.ELEMENTAL_DESTROYED_EVENT, elementalDestroyHandler);
     responsiveEventHandler();
 });

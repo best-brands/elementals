@@ -182,7 +182,7 @@ export default Elemental("fullPageView", function (elemental, settings) {
             return document.body.classList.add("is-non-scrollable");
         }, 200);
 
-        Events.publish(Events, `full-page-view-${settings.viewKey}`, ".opened", {
+        Events.publish(Events.events, `full-page-view-${settings.viewKey}`, ".opened", {
             actionSource: getActionContext(),
             fullPageViewElement: context
         });
@@ -213,7 +213,7 @@ export default Elemental("fullPageView", function (elemental, settings) {
             return window.scrollTo(0, scrollPos);
         }, 0)
 
-        Events.publish(Events, `full-page-view-${settings.viewKey}`, ".closed");
+        Events.publish(Events.events, `full-page-view-${settings.viewKey}`, ".closed");
     }
 
     /**
@@ -245,7 +245,7 @@ export default Elemental("fullPageView", function (elemental, settings) {
         getActionContext().disabled = true
         getActionContext().removeAttribute("title")
 
-        subscription = Elemental.pubSubClient.subscribe(Events, Viewport.responsiveEvent, function (data) {
+        subscription = Elemental.pubSubClient.subscribe(Events.events, Viewport.responsiveEvent, function (data) {
             if (data.viewport !== Viewports.MOBILE && context.classList.contains("is-active")) closeHandler();
         })
 
@@ -261,6 +261,21 @@ export default Elemental("fullPageView", function (elemental, settings) {
         setContent: setContent,
         setFooterContent: setFooterContent,
         setTitle: setTitle,
+        setAction: function (target, location) {
+            let selector = {
+                "top-left": ".js-full-page-view-top-left-action-container",
+                "top-right": ".js-full-page-view-top-right-action-container"
+            }[location];
+
+            let topActionContainer = context.querySelector(selector),
+                el = stringToElem(target);
+
+            while (topActionContainer.firstChild)
+                topActionContainer.removeChild(topActionContainer.firstChild)
+
+            topActionContainer.appendChild(el);
+            return el
+        },
         pause: function () {
             Elemental.pubSubClient.unsubscribe(subscription);
             window.removeEventListener("hashchange", hashChangeHandler)

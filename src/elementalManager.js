@@ -4,7 +4,7 @@ import * as toolkit from './core/toolkit';
 import {default as ResponsiveControllerElemental} from './core/responsiveController';
 import * as elementalEvents from "./core/elementalEvents";
 
-var elementalDataTag = 'data-elemental';
+let elementalDataTag = 'data-elemental';
 
 /**
  * Parse the Json present in an elemental
@@ -12,7 +12,7 @@ var elementalDataTag = 'data-elemental';
  */
 function parseElementalJson(elementalConfig) {
     try {
-        var parsedContent = JSON.parse(elementalConfig);
+        let parsedContent = JSON.parse(elementalConfig);
         return {
             results: Array.isArray(parsedContent) ? parsedContent : [parsedContent],
             isValid: true
@@ -32,7 +32,7 @@ function parseElementalJson(elementalConfig) {
  * @returns {(*|any[])|{name: string}[]}
  */
 function parseElemental(elemental) {
-    var elementalConfig = elemental.getAttribute(elementalDataTag);
+    let elementalConfig = elemental.getAttribute(elementalDataTag);
 
     // Check if its JSON, if so, we will parse it separately
     if (elementalConfig.includes("[")
@@ -40,7 +40,7 @@ function parseElemental(elemental) {
         || elementalConfig.includes("{")
         || elementalConfig.includes("}")
     ) {
-        var config = parseElementalJson(elementalConfig),
+        let config = parseElementalJson(elementalConfig),
             results = config.results,
             errors = config.error;
 
@@ -84,9 +84,9 @@ function setElementalData(elemental, key, value) {
  * @param elemental
  * @returns {*}
  */
-function updateElementalJson(elemental) {
-    for (var argumentCount = 1; argumentCount < arguments.length; argumentCount++) {
-        var elementalConfig = null != arguments[argumentCount] ? arguments[argumentCount] : {},
+function setElementalJson(elemental) {
+    for (let argumentCount = 1; argumentCount < arguments.length; argumentCount++) {
+        let elementalConfig = null != arguments[argumentCount] ? arguments[argumentCount] : {},
             configEntries = Object.keys(elementalConfig);
 
         if (typeof Object.getOwnPropertySymbols == "function") {
@@ -110,7 +110,7 @@ function updateElementalJson(elemental) {
  * @param elementalId
  * @returns {{elementalOptions: *, elemental: *, elementalName: *, id: *, isActiveOn: *}}
  */
-function getOptionsForConfig(config, elemental, elementalId) {
+function getElementalDefaults(config, elemental, elementalId) {
     return {
         isActiveOn: config.isActiveOn,
         elementalName: config.name,
@@ -147,7 +147,7 @@ function elementalResultFilter(elemental) {
 function getElementalConfigProperty(elemental) {
     return [{
         configProperty: "isActiveOn",
-        getOptionsForConfig: getOptionsForConfig,
+        getOptionsForConfig: getElementalDefaults,
         elemental: ResponsiveControllerElemental,
         resultFilter: elementalConfigResultFilter
     }].filter(function (row) {
@@ -205,27 +205,27 @@ function destroyElemental(elemental, name, responsiveElemental) {
 function resumeElemental(obj, elemental) {
     try {
         obj.resume();
-        return updateElementalJson({}, elemental, {
+        return setElementalJson({}, elemental, {
             processed: true
         });
     } catch (error) {
         console.log(`An error occurred attempting to resume elemental: ${elemental.name}`);
-        return updateElementalJson({}, elemental, {
+        return setElementalJson({}, elemental, {
             processed: false
         })
     }
 }
 
 /**
- * Creates an elemental
- * @param config
- * @param tag
- * @param options
+ * Executes an elemental
+ * @param factory
+ * @param abi
+ * @param settings
  * @param id
  */
-function createElemental(config, tag, options, id) {
-    var namespace = config(tag, options);
-    namespace && (namespace.id = id);
+function executeElemental(factory, abi, settings, id) {
+    let result = factory(abi, settings);
+    result && (result.id = id);
 }
 
 /**
@@ -236,7 +236,7 @@ function createElemental(config, tag, options, id) {
  */
 function destroyResponsiveElemental(elemental, settings) {
     // Get the responsively wrapped elemental
-    var responsiveElemental = Collection.getById(elemental, settings.name, settings.id);
+    let responsiveElemental = Collection.getById(elemental, settings.name, settings.id);
 
     if (!responsiveElemental)
         return settings;
@@ -244,7 +244,7 @@ function destroyResponsiveElemental(elemental, settings) {
     // Try to destroy the elemental
     if (responsiveElemental.destroy) {
         destroyElemental(elemental, settings.name, responsiveElemental);
-        return updateElementalJson({}, settings, {
+        return setElementalJson({}, settings, {
             processed: void 0
         });
     }
@@ -252,7 +252,7 @@ function destroyResponsiveElemental(elemental, settings) {
     // Try to pause the elemental
     if (responsiveElemental.pause) {
         pauseElemental(elemental, settings.name, responsiveElemental);
-        return updateElementalJson({}, settings, {
+        return setElementalJson({}, settings, {
             processed: void 0
         });
     }
@@ -273,24 +273,24 @@ function resumeElementalByID(tag, elemental) {
 
 /**
  * Boot an elemental
- * @param config
+ * @param instance
  * @param tag
  * @param options
  * @param id
  * @param elemental
  * @returns {*}
  */
-function bootElemental(config, tag, options, id, elemental) {
+function bootElemental(instance, tag, options, id, elemental) {
     try {
-        createElemental(config, tag, options, id);
-        return updateElementalJson({}, elemental, {
+        executeElemental(instance, tag, options, id);
+        return setElementalJson({}, elemental, {
             processed: true,
             id: id
         });
     } catch (error) {
         console.debug(error);
-        console.log(`An error occurred initializing elemental: ${elemental.name}`);
-        return updateElementalJson({}, elemental, {
+        console.debug(`An error occurred initializing elemental: ${elemental.name}`);
+        return setElementalJson({}, elemental, {
             processed: false
         })
     }
@@ -299,52 +299,26 @@ function bootElemental(config, tag, options, id, elemental) {
 /**
  * Initialize an Elemental
  * @param tag
- * @param elementalsToInitialize
+ * @param elementals
  * @param elemental
- * @param elementalId
+ * @param id
  * @returns {{processed}|*}
  */
-function initElemental(tag, elementalsToInitialize, elemental, elementalId) {
-    // Check if its already been processed, if so, skip
-    if (elemental.processed)
-        return elemental;
+function initElemental(tag, elementals, elemental, id) {
+    // Check if its already been processed, if so, skip.
+    if (elemental.processed) return elemental;
 
-    // If it has a ID, we should return that elemental
-    if (elemental.id)
-        return resumeElementalByID(tag, elemental);
+    // If it has a ID, we should return that elemental as it has already been launched once.
+    if (elemental.id) return resumeElementalByID(tag, elemental);
 
-    // Get the factory
-    var elementalFactory = function (elemental) {
-        var configProperty = getElementalConfigProperty(elemental);
-
-        return (configProperty && configProperty.resultFilter)
-            ? configProperty.resultFilter
-            : elementalResultFilter;
-
-    }(elemental);
-
-    // Get the config if it exists
-    var elementalConfig = function (elemental, elementalsToInitialize) {
-        var configProperty = getElementalConfigProperty(elemental);
-
-        return (configProperty)
-            ? configProperty.elemental
-            : elementalsToInitialize[elemental.name]
-
-    }(elemental, elementalsToInitialize);
-
-    // Get the defaults if it exists
-    var elementalOptions = function (elemental, settings, id) {
-        var configProperty = getElementalConfigProperty(elemental);
-
-        return configProperty
-            ? configProperty.getOptionsForConfig(elemental, settings[elemental.name], id)
-            : elemental.options
-    }(elemental, elementalsToInitialize, elementalId);
+    let config = getElementalConfigProperty(elemental),
+        filter = (config && config.resultFilter) ? config.resultFilter : elementalResultFilter,
+        instance = config ? config.elemental : elementals[elemental.name],
+        options = config ? config.getOptionsForConfig(elemental, elementals[elemental.name], id) : elemental.options
 
     // If it can be instantiated, we boot it, otherwise, we just return the elemental
-    return (elementalFactory(elementalConfig, tag, elementalOptions))
-        ? bootElemental(elementalConfig, tag, elementalOptions, elementalId, elemental)
+    return (filter(instance, tag, options))
+        ? bootElemental(instance, tag, options, id, elemental)
         : elemental;
 }
 
@@ -354,7 +328,7 @@ function initElemental(tag, elementalsToInitialize, elemental, elementalId) {
  * @param elementalsToInitialise
  */
 function initElementals(elementalsTag, elementalsToInitialise) {
-    var config = parseElemental(elementalsTag),
+    let config = parseElemental(elementalsTag),
         newConfig = config.map(function(elemental, index) {
             return initElemental(elementalsTag, elementalsToInitialise, elemental, elemental.id || String(index));
         }),
@@ -387,7 +361,7 @@ export default {
      */
     destroyElementals: function (context) {
         getElementalsInContext(context).map(function (elemental) {
-            var config = parseElemental(elemental),
+            let config = parseElemental(elemental),
                 newConfig = config.map(function (settings) {
                     return destroyResponsiveElemental(elemental, settings);
                 }),

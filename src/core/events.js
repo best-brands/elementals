@@ -1,6 +1,11 @@
-var eventToken = 0,
+let eventToken = 0,
     subscriptionList = [],
     autoClient = 0;
+
+/**
+ * This holds all global subscriptions to events
+ */
+export var events;
 
 /**
  * Subscribe to an event
@@ -14,7 +19,7 @@ export function subscribe(subject, event, callback, clientId) {
     if ("function" != typeof callback)
         return -1;
 
-    var newClientToken = ++eventToken;
+    let newClientToken = ++eventToken;
 
     subscriptionList.push({
         subject: subject,
@@ -35,7 +40,7 @@ export function subscribe(subject, event, callback, clientId) {
  * @param clientId
  */
 export function subscribeOnce(subject, event, callback, clientId) {
-    var subscription = subscribe(subject, event, function (toPublish) {
+    let subscription = subscribe(subject, event, function (toPublish) {
         callback(toPublish);
         unsubscribe(subscription)
     }, clientId);

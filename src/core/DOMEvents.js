@@ -41,7 +41,7 @@ export function removeEventListener(context, event, listener, useCapture = false
     if (!context.eventListenerList[event])
         context.eventListenerList[event] = [];
 
-    for (var i = 0; i < context.eventListenerList[event].length; i++) {
+    for (let i = 0; i < context.eventListenerList[event].length; i++) {
         if (context.eventListenerList[event][i].listener === listener, context.eventListenerList[event][i].useCapture === useCapture) { // Hmm..
             context.eventListenerList[event].splice(i, 1);
             break;
@@ -71,11 +71,11 @@ export function clearEventListeners(context) {
     if (!context.eventListenerList)
         context.eventListenerList = {};
 
-    var events = getEventListeners(context);
-    for (var event in events) {
+    let events = getEventListeners(context);
+    for (let event in events) {
         if (!events.hasOwnProperty(event))
             continue;
-        var el = getEventListeners(context, event);
+        let el = getEventListeners(context, event);
         if (el !== undefined) {
             for (var i = el.length - 1; i >= 0; --i) {
                 removeEventListener(context, event, el[i].listener, el[i].useCapture);

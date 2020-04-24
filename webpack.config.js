@@ -70,7 +70,7 @@ module.exports = {
             filename: 'assets.json',
             integrity: true,
             prettyPrint: true,
-            path: path.resolve(__dirname, '../config')
+            path: path.resolve(__dirname, '.')
         }),
         new ExtractCssChunksPlugin({
             filename: '[name].css'

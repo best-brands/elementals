@@ -1,7 +1,7 @@
 import * as Events from './events';
 import * as viewports from './viewports';
 
-var viewport;
+let viewport;
 
 /**
  * Our event name
@@ -15,7 +15,7 @@ export var responsiveEvent = "global.responsiveViewChanged";
  */
 export function calculateViewport() {
     // Initialize variables
-    var elem = document.createElement("span"),
+    let elem = document.createElement("span"),
         previousViewport = viewport;
 
     elem.className = "responsive-tracking";
@@ -35,13 +35,13 @@ export function calculateViewport() {
 
     if (void 0 !== previousViewport && previousViewport !== viewport) {
         // Event data
-        var publishData = {
+        let publishData = {
             viewport: viewport,
             previousViewport: previousViewport
         };
 
         // Trigger events
-        Events.publish(Events, responsiveEvent, publishData);
+        Events.publish(Events.events, responsiveEvent, publishData);
     }
 
     return viewport;
@@ -53,7 +53,7 @@ export function calculateViewport() {
  * @param className
  */
 function elemVisibleWithClass(context, className) {
-    var spanElem = document.createElement("span");
+    let spanElem = document.createElement("span");
 
     spanElem.className = className;
     context.appendChild(spanElem);
