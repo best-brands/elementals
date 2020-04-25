@@ -32,15 +32,11 @@ function parseElementalJson(elementalConfig) {
  * @returns {(*|any[])|{name: string}[]}
  */
 function parseElemental(elemental) {
-    let elementalConfig = elemental.getAttribute(elementalDataTag);
+    let rawElemental = elemental.getAttribute(elementalDataTag);
 
     // Check if its JSON, if so, we will parse it separately
-    if (elementalConfig.includes("[")
-        || elementalConfig.includes("]")
-        || elementalConfig.includes("{")
-        || elementalConfig.includes("}")
-    ) {
-        let config = parseElementalJson(elementalConfig),
+    if (/[\[\]{}]/.test(rawElemental)) {
+        let config = parseElementalJson(rawElemental),
             results = config.results,
             errors = config.error;
 
@@ -50,7 +46,7 @@ function parseElemental(elemental) {
 
         // elemental doesn't have any configuration, so we should just map it space separated
     } else {
-        return elementalConfig.split(" ").map(function (elementalName) {
+        return rawElemental.split(" ").map(function (elementalName) {
             return {
                 name: elementalName.trim()
             }

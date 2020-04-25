@@ -1,69 +1,7 @@
 import {Elemental} from "../index";
 
-/**
- * menu-aim is an elemental plugin for dropdown menus that can differentiate
- * between a user trying hover over a dropdown item vs trying to navigate into
- * a submenu's contents.
- *
- * menu-aim assumes that you have are using a menu with submenus that expand
- * to the menu's right. It will fire events when the user's mouse enters a new
- * dropdown item *and* when that item is being intentionally hovered over.
- *
- * __________________________
- * | Monkeys  >|   Gorilla  |
- * | Gorillas >|   Content  |
- * | Chimps   >|   Here     |
- * |___________|____________|
- *
- * In the above example, "Gorillas" is selected and its submenu content is
- * being shown on the right. Imagine that the user's cursor is hovering over
- * "Gorillas." When they move their mouse into the "Gorilla Content" area, they
- * may briefly hover over "Chimps." This shouldn't close the "Gorilla Content"
- * area.
- *
- * This problem is normally solved using timeouts and delays. menu-aim tries to
- * solve this by detecting the direction of the user's mouse movement. This can
- * make for quicker transitions when navigating up and down the menu. The
- * experience is hopefully similar to amazon.com/'s "Shop by Department"
- * dropdown.
- *
- * The following options can be passed to menuAim. All functions execute with
- * the relevant row's HTML element as the execution context ('this'):
- *
- *      {
- *          // Function to call when a row is purposefully activated. Use this
- *          // to show a submenu's content for the activated row.
- *          activate: function() {},
- *
- *          // Function to call when a row is deactivated.
- *          deactivate: function() {},
- *
- *          // Function to call when mouse enters a menu row. Entering a row
- *          // does not mean the row has been activated, as the user may be
- *          // mousing over to a submenu.
- *          enter: function() {},
- *
- *          // Function to call when mouse exits a menu row.
- *          exit: function() {},
- *
- *          // Selector for identifying which elements in the menu are rows
- *          // that can trigger the above events. Defaults to "> li".
- *          rowSelector: "> li",
- *
- *          // You may have some menu rows that aren't submenus and therefore
- *          // shouldn't ever need to "activate." If so, filter submenu rows w/
- *          // this selector. Defaults to "*" (all elements).
- *          submenuSelector: "*",
- *
- *          // Direction the submenu opens relative to the main menu. Can be
- *          // left, right, above, or below. Defaults to "right".
- *          submenuDirection: "right"
- *      }
- *
- * https://github.com/kamens/jQuery-menu-aim
- */
-export default Elemental("MenuAim", function (elemental, settings) {
-    var menu = elemental.el,
+export default Elemental("menuAim", function (elemental, settings) {
+    let menu = elemental.el,
         activeRow = null,
         mouseLocs = [],
         lastDelayLoc = null,
@@ -170,7 +108,7 @@ export default Elemental("MenuAim", function (elemental, settings) {
      * @param row
      */
     function possiblyActivate(row) {
-        var delay = activationDelay();
+        let delay = activationDelay();
 
         if (delay) {
             timeoutId = setTimeout(function () {
@@ -206,26 +144,24 @@ export default Elemental("MenuAim", function (elemental, settings) {
             return 0;
         }
 
-        var offset = menu.getBoundingClientRect();
+        let offset = menu.getBoundingClientRect(),
+            left = offset.left + document.body.scrollLeft,
+            top = offset.top + document.body.scrollTop;
 
-        // Set the proper offsets
-        offset.left = offset.left + document.body.scrollLeft;
-        offset.top = offset.top + document.body.scrollTop;
-
-        var upperLeft = {
-                x: offset.left,
-                y: offset.top - options.tolerance
+        let upperLeft = {
+                x: left,
+                y: top - options.tolerance
             },
             upperRight = {
-                x: offset.left + menu.offsetWidth,
+                x: left + menu.offsetWidth,
                 y: upperLeft.y
             },
             lowerLeft = {
-                x: offset.left,
-                y: offset.top + menu.offsetHeight + options.tolerance
+                x: left,
+                y: top + menu.offsetHeight + options.tolerance
             },
             lowerRight = {
-                x: offset.left + menu.offsetWidth,
+                x: left + menu.offsetWidth,
                 y: lowerLeft.y
             },
             loc = mouseLocs[mouseLocs.length - 1],
@@ -239,8 +175,8 @@ export default Elemental("MenuAim", function (elemental, settings) {
             prevLoc = loc;
         }
 
-        if (prevLoc.x < offset.left || prevLoc.x > lowerRight.x ||
-            prevLoc.y < offset.top || prevLoc.y > lowerRight.y) {
+        if (prevLoc.x < left || prevLoc.x > lowerRight.x ||
+            prevLoc.y < top || prevLoc.y > lowerRight.y) {
             // If the previous mouse location was outside of the entire
             // menu's bounds, immediately activate.
             return 0;
@@ -276,7 +212,7 @@ export default Elemental("MenuAim", function (elemental, settings) {
             return (b.y - a.y) / (b.x - a.x);
         }
 
-        var decreasingCorner = upperRight,
+        let decreasingCorner = upperRight,
             increasingCorner = lowerRight;
 
         // Our expectations for decreasing or increasing slope values
@@ -297,7 +233,7 @@ export default Elemental("MenuAim", function (elemental, settings) {
             increasingCorner = upperRight;
         }
 
-        var decreasingSlope = slope(loc, decreasingCorner),
+        let decreasingSlope = slope(loc, decreasingCorner),
             increasingSlope = slope(loc, increasingCorner),
             prevDecreasingSlope = slope(prevLoc, decreasingCorner),
             prevIncreasingSlope = slope(prevLoc, increasingCorner);
