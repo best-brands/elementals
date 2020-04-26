@@ -16,12 +16,35 @@ function checkArguments(name, factory, defaults) {
 }
 
 /**
+ * Adds a garbage collector observer to the initialized elemental
+ * @param elem
+ */
+function setGarbageCollector(elem) {
+    let observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (mutation) {
+            let nodes = Array.from(mutation.removedNodes);
+            if (nodes.indexOf(elem) > -1 || nodes.some(parent => parent.contains(elem))) {
+                console.log("removing", elem);
+                Storage.removeAll(elem)
+                observer.disconnect();
+            }
+        })
+    })
+
+    observer.observe(document.body,{
+        subtree: true,
+        childList: true
+    })
+}
+
+/**
  * Create elemental object
  * @param name
  * @param elem
  */
 function createElementalObject(name, elem) {
     let eventSubscription = Events.getClient();
+    if (window.MutationObserver) setGarbageCollector(elem);
 
     return {
         name: name,

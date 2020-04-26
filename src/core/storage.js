@@ -55,3 +55,16 @@ export function remove(element, key) {
     }
     return ret;
 }
+
+/**
+ * Remove an entire WeakMap key
+ * todo: refactor to have remove with a default undefined `key`
+ * @param element
+ */
+export function removeAll(element) {
+    let map = storage.get(element)
+    if (map) {
+        map.clear();
+        storage.delete(element);
+    }
+}
