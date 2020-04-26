@@ -24,7 +24,6 @@ function setGarbageCollector(elem) {
         mutations.forEach(function (mutation) {
             let nodes = Array.from(mutation.removedNodes);
             if (nodes.indexOf(elem) > -1 || nodes.some(parent => parent.contains(elem))) {
-                console.log("removing", elem);
                 Storage.removeAll(elem)
                 observer.disconnect();
             }
