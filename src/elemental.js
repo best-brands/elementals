@@ -25,9 +25,7 @@ function setGarbageCollector(elem) {
             let nodes = Array.from(mutation.removedNodes);
             if (nodes.indexOf(elem) > -1 || nodes.some(parent => parent.contains(elem))) {
                 Storage.getAll(elem).forEach(function (elemental) {
-                    if (elem !== typeof Object) return;
-                    if (elemental.pause) elemental.pause();
-                    if (elemental.destroy) elemental.destroy();
+                    elemental.destroy()
                 });
                 Storage.removeAll(elem);
                 observer.disconnect();
@@ -88,6 +86,7 @@ export default function (name, factory, defaults) {
             try {
                 let instance = factory(elemental, settings) || {};
                 Collection.add(elem, name, instance);
+                if (!instance.destroy) instance.destroy = elemental.destroy
                 return instance
             } catch (error) {
                 throw error
