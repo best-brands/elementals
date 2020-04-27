@@ -24,7 +24,9 @@ function setGarbageCollector(elem) {
         mutations.forEach(function (mutation) {
             let nodes = Array.from(mutation.removedNodes);
             if (nodes.indexOf(elem) > -1 || nodes.some(parent => parent.contains(elem))) {
-                Storage.removeAll(elem)
+                Storage.getAll(elem).forEach(function (elemental) {
+                    elemental.destroy()
+                });
                 observer.disconnect();
             }
         })
@@ -43,7 +45,7 @@ function setGarbageCollector(elem) {
  */
 function createElementalObject(name, elem) {
     let eventSubscription = Events.getClient();
-    if (window.MutationObserver) setGarbageCollector(elem);
+    if (window.MutationObserver && !Storage.getAll(elem)) setGarbageCollector(elem);
 
     return {
         name: name,
