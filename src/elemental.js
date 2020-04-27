@@ -25,8 +25,11 @@ function setGarbageCollector(elem) {
             let nodes = Array.from(mutation.removedNodes);
             if (nodes.indexOf(elem) > -1 || nodes.some(parent => parent.contains(elem))) {
                 Storage.getAll(elem).forEach(function (elemental) {
-                    elemental.destroy()
+                    if (elem !== typeof Object) return;
+                    if (elemental.pause) elemental.pause();
+                    if (elemental.destroy) elemental.destroy();
                 });
+                Storage.removeAll(elem);
                 observer.disconnect();
             }
         })
