@@ -144,8 +144,10 @@ export default Elemental("menuAim", function (elemental, settings) {
             return 0;
         }
 
-        let offset = menu.getBoundingClientRect(),
-            left = offset.left + document.body.scrollLeft,
+        let offset = menu.getBoundingClientRect();
+
+        // Set the proper offsets
+        let left = offset.left + document.body.scrollLeft,
             top = offset.top + document.body.scrollTop;
 
         let upperLeft = {
@@ -251,12 +253,15 @@ export default Elemental("menuAim", function (elemental, settings) {
         return 0;
     }
 
+    let menuSubElements
+
     /**
      * Install all event handlers for menuAim
      */
     function installEventHandlers() {
         menu.addEventListener("mouseleave", mouseleaveMenu);
-        [...menu.querySelectorAll(options.rowSelector)].forEach(function (elem) {
+        menuSubElements = [...menu.querySelectorAll(options.rowSelector)];
+        menuSubElements.forEach(function (elem) {
             elem.addEventListener("mouseenter", mouseenterRow);
             elem.addEventListener("mouseleave", mouseleaveRow);
             elem.addEventListener("click", clickRow);
@@ -269,7 +274,7 @@ export default Elemental("menuAim", function (elemental, settings) {
      */
     function uninstallEventHandlers() {
         menu.removeEventListener("mouseleave", mouseleaveMenu);
-        [...menu.querySelectorAll(options.rowSelector)].forEach(function (elem) {
+        menuSubElements.forEach(function (elem) {
             elem.removeEventListener("mouseenter", mouseenterRow);
             elem.removeEventListener("mouseleave", mouseleaveRow);
             elem.removeEventListener("click", clickRow);
