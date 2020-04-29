@@ -1,112 +1,20 @@
-# Elementals
+# Elementals - HTML Enrichment
 
-A JS framework for managing HTML elements enriched by JS.
+## Contribution guides
+In the spirit of open source software development, I always encourage community code contribution. To get start,
+all your work submitted will be subject to the MIT license. If you require a change, open a pull request and make sure
+to follow the coding guidelines.
 
-## Installation
+## Environments in which to use Elementals
+- High traffic sites which require enriched elements. Usually, websites that still need no-js support and believe in
+the fact that JavaScript is there to enrich content, not to replace.
+- High browser compatibility.
 
-Add the following css to the head of your body in order for the `activeOn` property to work:
+## Unit tests
+Unit tests still have to be implemented. These are a work in progress.
 
-```css
-.responsive-tracking--visible-on-tablet,
-.responsive-tracking--visible-on-desktop,
-.responsive-tracking--visible-on-large-desktop {
-  display: none;
-  height: 1px;
-  width: 1px
-}
+## Dependencies
+None.
 
-@media only screen and (min-width: 668px) {
-  .responsive-tracking--visible-on-tablet {
-    display: block
-  }
-}
-
-@media only screen and (min-width: 1024px) {
-  .responsive-tracking--visible-on-tablet {
-    display: none
-  }
-  .responsive-tracking--visible-on-desktop {
-    display: block
-  }
-}
-
-@media only screen and (min-width: 1280px) {
-  .responsive-tracking--visible-on-desktop {
-    display: none
-  }
-  .responsive-tracking--visible-on-large-desktop {
-    display: block
-  }
-}
-```
-
-## Usage
-
-The power of Elemental components is that it can easily enrich your content without requiring janky code solutions
-whenever you are in need of re-usable components. Besides, it also makes name-spacing your components very easy, which
-means that if one does crash, it will log the error but load the rest of the components nonetheless.
-
-Initializing an Elemental is really easy:
-
-```js
-import {Elemental, ElementalManager, Install} from 'src/elemental';
-
-let elemental = Elemental("someElemental", function (elemental, options) {
-    // You get access to an object with access to the current DOM you are working in.
-    // .name is the elemental name
-    // .el is the javascript context
-    // .destroy is the removal callable
-    // .getInstance fetches an already instantiated instance in the current namespace
-    // .getInstances fetches all elementals in the current namespace
-    // .getInstanceFromElement fetches an elemental from another provided namespace
-    // .pubSubClient is the event manager subscription
-    elemental.el.innerHTML = 'Testing some text';
-
-    return {
-        resume: function () {},
-        destroy: function () {},
-        pause: function () {}
-    }
-});
-
-ElementalManager.initElementals({
-    someElemental: elemental
-}, document);
-
-// bind resize events (we do this after initializing the elementals
-// to avoid page jumping when we are still initializing elementals.
-Install();
-```
-
-```html
-<div data-elemental="someElemental"></div>
-```
-
-You can also add JSON content in the `data-elemental` tag for more control over elementals:
-
-For optional parameters, you can pass the following json content with anything you want in "options":
-
-```json
-{
-  "name": "someElemental",
-  "isActiveOn": ["mobile"],
-  "options": {}
-}
-```
-
-You can also initialize multiple elementals on the same element:
-
-```json
-[
-    {
-      "name": "someElemental",
-      "isActiveOn": ["mobile"],
-      "options": {}
-    },
-    {
-      "name": "someElemental2",
-      "isActiveOn": ["tablet", "desktop", "desktop-large"],
-      "options": {}
-    }
-]
-```
+## Questions?
+If you have any questions, feel free to open a discussion on Github.

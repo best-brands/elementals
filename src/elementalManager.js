@@ -78,12 +78,13 @@ function setElementalData(elemental, key, value) {
 /**
  * Update the Json from the elemental
  * @param elemental
+ * @param params
  * @returns {*}
  */
-function setElementalJson(elemental) {
-    for (let argumentCount = 1; argumentCount < arguments.length; argumentCount++) {
-        let elementalConfig = null != arguments[argumentCount] ? arguments[argumentCount] : {},
-            configEntries = Object.keys(elementalConfig);
+function setElementalJson(elemental, ...params) {
+    params.forEach(function (param) {
+        let elementalConfig = null != param ? param : {},
+        configEntries = Object.keys(elementalConfig);
 
         if (typeof Object.getOwnPropertySymbols == "function") {
             configEntries = configEntries.concat(Object.getOwnPropertySymbols(elementalConfig).filter(function (configKey) {
@@ -94,7 +95,7 @@ function setElementalJson(elemental) {
         configEntries.forEach(function (key) {
             setElementalData(elemental, key, elementalConfig[key])
         })
-    }
+    });
 
     return elemental
 }
@@ -132,7 +133,7 @@ function elementalConfigResultFilter(name, config, initialised) {
  * @param elemental
  * @returns {boolean}
  */
-function elementalResultFilter(elemental) {
+function elementalDefaultResultFilter(elemental) {
     return "function" == typeof elemental
 }
 
@@ -308,7 +309,7 @@ function initElemental(tag, elementals, elemental, id) {
     if (elemental.id) return resumeElementalByID(tag, elemental);
 
     let config = getElementalConfigProperty(elemental),
-        filter = (config && config.resultFilter) ? config.resultFilter : elementalResultFilter,
+        filter = (config && config.resultFilter) ? config.resultFilter : elementalDefaultResultFilter,
         instance = config ? config.elemental : elementals[elemental.name],
         options = config ? config.getOptionsForConfig(elemental, elementals[elemental.name], id) : elemental.options
 
