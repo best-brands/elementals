@@ -22,15 +22,14 @@ let gettingStarted = Elemental("gettingStarted", function (elemental, options) {
     elemental.el.innerHTML = 'Testing some text';
 
     return {
-        resume: function () {
-            elemental.el.innerHTML = 'The elemental is now resumed';
-        },
-        pause: function () {
-            elemental.el.innerHTML = 'The elemental is now paused';
-        }
+        resume: function () {},
+        pause: function () {},
+        // there is also a destroy method, although this is only for advanced usage
     }
 });
 
+// Lets initialize the elementals in a global context. We can also initialize them
+// in a given context, which is great for using them in e.g. popups.
 ElementalManager.initElementals({
     gettingStarted: gettingStarted
 }, document);
@@ -44,84 +43,6 @@ Now, all we need to do to initialize it in the DOM, is set the `data-elemental` 
 
 ```html
 <div data-elemental="gettingStarted">Uninitialized text</div>
-```
-
-## Making it responsive
-
-Now that you initialized your first elemental, you might see a problem if you will create separate elementals for
-desktop and mobile. To solve this issue, we can load them lazily based on the viewport. To utilize this, we make use of
-the "isActiveOn" property.
-
-```html
-<div data-elemental='{"name":"gettingStarted", "isActiveOn": ["mobile"]'>Text that will show on tablet and desktop</div>
-```
-
-To list the situations easily, the following might occur, and the following will happen:
-
-| Situation                             | What happens                  |
-| ------------------------------------- | ----------------------------- |
-| in viewport                           | elemental gets loaded         |
-| not in viewport                       | elemental does not get loaded |
-| in viewport after viewport change     | elemental gets loaded/resumed |
-| not in viewport after viewport change | elemental gets paused         |
-
-Note: make sure you include the "index.css" file so that the `isActiveOn` property works.
-
-## Inheritance? Tell me more!
-
-Yes, it is possible to 'inherit' functionality from other components, as long as they give you an according API. A good
-example is the menuAim elemental in the example folder. As you can see, it accepts an object of settings with the
-following values:
-
-```javascript
-let options = {
-    rowSelector: "> li",
-    submenuSelector: "*",
-    submenuDirection: "right",
-    tolerance: 75, // bigger = more forgiving when entering submenu
-    enter: function () {},
-    exit: function () {},
-    activate: function () {},
-    deactivate: function () {},
-    exitMenu: function () {}
-}
-```
-
-Now, these values, we can change by passing different values. Let's take a look at how we can inherit another elemental:
-
-```javascript
-import {Elemental} from "../index";
-import {default as MenuAimElemental} from "./menuAimElemental"
-
-// A simple example of elemental inheritance. We can manage elementals ourselves by initializing
-// them on a context and by managing the instance. This way we can inherit functionality from a different
-// elemental by means of the same API, this is great for re-using elementals.
-export default Elemental("categoryMenuAimElemental", function (elemental, settings) {
-    // we initialize the "menuAim" elemental and override some functions in the API of menuAim
-    let menuAim = MenuAimElemental(elemental.el, {...{
-        activate: function (target) {
-            target.classList.add("is-active");
-            target.setAttribute("tabindex", -1);
-            target.focus();
-        },
-        deactivate: function (target) {
-            target.classList.remove("is-active")
-        },
-        submenuDirection: "below"
-    // we again allow settings to be passed through the elemental options tag
-    }, ...settings});
-
-    return {
-        pause: function () {
-            // when we pause, we will also have to pause the menuAim instance
-            // manually, as it has not been registered to the elemental manager
-            menuAim.pause()
-        },
-        resume: function () {
-            menuAim.resume()
-        }
-    }
-});
 ```
 
 ## How do I pass data to my elementals?
@@ -149,3 +70,8 @@ The elemental schema looks as follows:
   "isActiveOn": ["mobile", "tablet", "desktop", "large-desktop"]
 }
 ```
+
+The following attributes can be added:
+- name: the name of the elemental to initialize;
+- options (optional): any type of json that will be passed as the second parameter to the elemental wrapper;
+- isActiveOn (optional): an array of viewports on which the elemental is active.
