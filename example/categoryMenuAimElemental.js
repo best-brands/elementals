@@ -1,4 +1,4 @@
-import {Elemental} from "../../index";
+import {Elemental} from "../index";
 import {default as MenuAimElemental} from "./menuAimElemental"
 
 // A simple example of elemental inheritance. We can manage elementals ourselves by initializing

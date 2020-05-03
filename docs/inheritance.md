@@ -1,8 +1,8 @@
 ## Inheritance
 
 Yes, it is possible to 'inherit' functionality from other components, as long as they give you an according API. A good
-example is the [menuAim](example/menuAimElemental.js) elemental in the example folder. As you can see, it accepts an
-object of settings with the following values:
+example is the [menuAim](https://github.com/harm-smits/elementals/tree/master/example/menuAimElemental.js) elemental in
+the example folder. As you can see, it accepts an object of settings with the following values:
 
 ```javascript
 let options = {
