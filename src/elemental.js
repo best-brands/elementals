@@ -43,6 +43,7 @@ function setGarbageCollector(elem) {
  * Create elemental object
  * @param name
  * @param elem
+ * @return {*}
  */
 function createElementalObject(name, elem) {
     let eventSubscription = Events.getClient();

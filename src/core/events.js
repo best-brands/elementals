@@ -88,6 +88,7 @@ export function clearAll() {
 /**
  * Create a client object
  * @param clientId
+ * @return {*}
  */
 function createClient(clientId) {
     return {

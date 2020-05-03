@@ -40,11 +40,11 @@ function parseElemental(elemental) {
             results = config.results,
             errors = config.error;
 
-        if (config.isValid) return results;
+        if (config.isValid)
+            return results;
 
         console.debug(errors);
-
-        // elemental doesn't have any configuration, so we should just map it space separated
+    // its not json, so we split by spaces
     } else {
         return rawElemental.split(" ").map(function (elementalName) {
             return {
@@ -254,7 +254,7 @@ function destroyResponsiveElemental(elemental, settings) {
         });
     }
 
-    // Unable to pause or destroy, so just return the settings
+    // Unable to pause or destroy, so just return the settings as nothing has changed
     return (settings);
 }
 
@@ -303,11 +303,14 @@ function bootElemental(instance, tag, options, id, elemental) {
  */
 function initElemental(tag, elementals, elemental, id) {
     // Check if its already been processed, if so, skip.
-    if (elemental.processed) return elemental;
+    if (elemental.processed)
+        return elemental;
 
     // If it has a ID, we should return that elemental as it has already been launched once.
-    if (elemental.id) return resumeElementalByID(tag, elemental);
+    if (elemental.id)
+        return resumeElementalByID(tag, elemental);
 
+    // Now, lets start preparing our settings
     let config = getElementalConfigProperty(elemental),
         filter = (config && config.resultFilter) ? config.resultFilter : elementalDefaultResultFilter,
         instance = config ? config.elemental : elementals[elemental.name],
