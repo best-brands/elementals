@@ -1,8 +1,8 @@
-import {Elemental, Viewports} from "../index";
+import {Elemental, Viewports} from "../../index";
 import htmlTemplate from "./fullPageViewElemental.html"
 import sassTemplate from "./fullPageViewElemental.sass"
-import * as Viewport from "../src/core/viewport";
-import * as Events from "../src/core/events";
+import * as Viewport from "../../src/core/viewport";
+import * as Events from "../../src/core/events";
 
 /**
  * Convert an HTML string to an element

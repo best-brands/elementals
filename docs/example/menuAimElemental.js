@@ -1,4 +1,4 @@
-import {Elemental} from "../index";
+import {Elemental} from "../../index";
 
 export default Elemental("menuAim", function (elemental, settings) {
     let menu = elemental.el,
