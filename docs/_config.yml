@@ -1,1 +1,10 @@
+title: Elementals Documentation
+description: Elementals is a JavaScript framework aimed at making re-usable components to enrich your HTML content
+
+author: Harm Smits
+
+social-network-links:
+  email: "harmsmitsdev@gmail.com"
+  github: "harm-smits"
+
 theme: jekyll-theme-cayman
