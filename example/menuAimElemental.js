@@ -7,17 +7,16 @@ export default Elemental("menuAim", function (elemental, settings) {
         lastDelayLoc = null,
         timeoutId = null,
         options = {
-            ...{
-                rowSelector: "> li",
-                submenuSelector: "*",
-                submenuDirection: "right",
-                tolerance: 75, // bigger = more forgiving when entering submenu
-                enter: function () {},
-                exit: function () {},
-                activate: function () {},
-                deactivate: function () {},
-                exitMenu: function () {}
-            }, ...settings
+            rowSelector: "> li",
+            submenuSelector: "*",
+            submenuDirection: "right",
+            tolerance: 75, // bigger = more forgiving when entering submenu
+            enter: function () {},
+            exit: function () {},
+            activate: function () {},
+            deactivate: function () {},
+            exitMenu: function () {},
+            ...settings
         };
 
     const MOUSE_LOCS_TRACKED = 3, // number of past mouse locations to track

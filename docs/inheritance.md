@@ -29,7 +29,7 @@ import {default as MenuAimElemental} from "example/menuAimElemental"
 // elemental by means of the same API, this is great for re-using elementals.
 export default Elemental("categoryMenuAimElemental", function (elemental, settings) {
     // we initialize the "menuAim" elemental and override some functions in the API of menuAim
-    let menuAim = MenuAimElemental(elemental.el, {...{
+    let menuAim = MenuAimElemental(elemental.el, {
         activate: function (target) {
             target.classList.add("is-active");
             target.setAttribute("tabindex", -1);
@@ -38,9 +38,9 @@ export default Elemental("categoryMenuAimElemental", function (elemental, settin
         deactivate: function (target) {
             target.classList.remove("is-active")
         },
-        submenuDirection: "below"
-    // we again allow settings to be passed through the elemental options tag
-    }, ...settings});
+        submenuDirection: "below",
+        ...settings
+    });
 
     return {
         pause: function () {

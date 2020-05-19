@@ -84,7 +84,7 @@ function setElementalData(elemental, key, value) {
 function setElementalJson(elemental, ...params) {
     params.forEach(function (param) {
         let elementalConfig = null != param ? param : {},
-        configEntries = Object.keys(elementalConfig);
+            configEntries = Object.keys(elementalConfig);
 
         if (typeof Object.getOwnPropertySymbols == "function") {
             configEntries = configEntries.concat(Object.getOwnPropertySymbols(elementalConfig).filter(function (configKey) {
