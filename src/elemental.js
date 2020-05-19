@@ -79,10 +79,10 @@ function createElementalObject(name, elem) {
  */
 export default function (name, factory, defaults) {
     checkArguments(name, factory, defaults);
-    return function (elementalNameSpace, elementalFactory) {
-        let mapped = ([elementalNameSpace]).map(function (elem) {
+    return function (elemental, settings) {
+        let mapped = ([elemental]).map(function (elem) {
             let elemental = createElementalObject(name, elem),
-                settings = {...defaults, ...elementalFactory};
+                settings = {...defaults, ...settings};
 
             try {
                 let instance = factory(elemental, settings) || {};
