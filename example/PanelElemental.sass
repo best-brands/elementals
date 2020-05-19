@@ -11,7 +11,7 @@
     100%
         opacity: 0
 
-.full-page-overlay
+.panel-overlay
     animation: fade-in-overlay .2s ease-in-out
     background-color: #111
     height: 100%
@@ -27,7 +27,7 @@
         animation: fade-out-overlay .2s ease-in-out
 
 /* Styling for our main full page view elemental. */
-.full-page-view
+.panel
     background-color: #fff
     display: flex
     flex-direction: column
@@ -98,10 +98,10 @@
         left: initial
         right: -100%
 
-        .full-page-view--main-bar
+        .panel--main-bar
             flex-direction: row-reverse
 
-        .full-page-view--action .icon-svg--rotate-flip
+        .panel--action .icon-svg--rotate-flip
             transform: rotate(0deg)
 
         &.is-active

@@ -1,6 +1,6 @@
 import {Elemental, Viewports} from "../index";
-import htmlTemplate from "./fullPageViewElemental.html"
-import sassTemplate from "./fullPageViewElemental.sass"
+import htmlTemplate from "./panelElemental.html"
+import sassTemplate from "./PanelElemental.sass"
 import * as Viewport from "../src/core/viewport";
 import * as Events from "../src/core/events";
 
@@ -35,14 +35,14 @@ function stringToElem(html = "") {
 /**
  * An elemental that provides an easy way to create fold-out menus
  */
-export default Elemental("fullPageView", function (elemental, settings) {
+export default Elemental("panel", function (elemental, settings) {
     let context,
         target = getTarget(),
         overlayElement,
         contextScrollPaneElement,
         contextPageContentElement,
         contextPageTitleElement,
-        overlayHtml = '<div class="full-page-overlay"></div>',
+        overlayHtml = '<div class="panel"></div>',
         scrollPos = 0,
         transition,
         subscription;
@@ -119,7 +119,7 @@ export default Elemental("fullPageView", function (elemental, settings) {
      */
     function setContent(content, indent = false) {
         if (indent) {
-            content = `<div class="full-page-view--indented-content">${content}</div>`;
+            content = `<div class="panel--indented-content">${content}</div>`;
         }
 
         contextPageContentElement.appendChild = stringToElem(content ? content : "");
@@ -130,13 +130,13 @@ export default Elemental("fullPageView", function (elemental, settings) {
      * @param content
      */
     function setFooterContent(content = null) {
-        let footer = context.querySelector(".js-full-page-view-footer")
+        let footer = context.querySelector(".js-panel-footer")
         if (content) {
             if (footer.length) {
                 while (footer.firstChild) footer.removeChild(footer.firstChild);
                 footer.appendChild(stringToElem(content));
             } else {
-                context.appendChild(stringToElem(`<div class="js-full-page-view-footer">${content}</div>`))
+                context.appendChild(stringToElem(`<div class="js-fpanel-footer">${content}</div>`))
             }
         } else {
             footer.parentNode.removeChild(footer);
@@ -165,7 +165,7 @@ export default Elemental("fullPageView", function (elemental, settings) {
         document.body.appendChild(overlayHtml);
 
         overlayElement.addEventListener("click", closeHandler);
-        context.querySelector(".js-full-page-view-close").addEventListener("click", closeHandler);
+        context.querySelector(".js-panel-close").addEventListener("click", closeHandler);
 
         if (!transition) {
             context.classList.add("is-transition-enabled");
@@ -182,7 +182,7 @@ export default Elemental("fullPageView", function (elemental, settings) {
             return document.body.classList.add("is-non-scrollable");
         }, 200);
 
-        Events.publish(Events.events, `full-page-view-${settings.viewKey}`, ".opened", {
+        Events.publish(Events.events, `panel-${settings.viewKey}`, ".opened", {
             actionSource: getActionContext(),
             fullPageViewElement: context
         });
@@ -197,7 +197,7 @@ export default Elemental("fullPageView", function (elemental, settings) {
     function closeHandler() {
         isCurrentView() && (setHistory(), window.history.back());
 
-        context.querySelector(".js-full-page-view-close").removeEventListener("click", closeHandler);
+        context.querySelector(".js-panel-close").removeEventListener("click", closeHandler);
         overlayElement.removeEventListener("click", closeHandler);
 
         overlayElement.addClass("is-being-removed");
@@ -213,7 +213,7 @@ export default Elemental("fullPageView", function (elemental, settings) {
             return window.scrollTo(0, scrollPos);
         }, 0)
 
-        Events.publish(Events.events, `full-page-view-${settings.viewKey}`, ".closed");
+        Events.publish(Events.events, `panel-${settings.viewKey}`, ".closed");
     }
 
     /**
@@ -231,9 +231,9 @@ export default Elemental("fullPageView", function (elemental, settings) {
         context = stringToElem(htmlTemplate);
         document.body.appendChild(context);
 
-        contextScrollPaneElement = context.querySelector(".js-full-page-view-scroll-pane");
-        contextPageContentElement = context.querySelector(".js-full-page-view-content");
-        contextPageTitleElement = context.querySelector(".js-full-page-view-title");
+        contextScrollPaneElement = context.querySelector(".js-panel-scroll-pane");
+        contextPageContentElement = context.querySelector(".js-panel-content");
+        contextPageTitleElement = context.querySelector(".js-panel-title");
 
         if (settings.indentedContent) setContent(settings.indentedContent) else setContent(settings.content)
         if (settings.direction) setDirection(settings.direction);
@@ -263,8 +263,8 @@ export default Elemental("fullPageView", function (elemental, settings) {
         setTitle: setTitle,
         setAction: function (target, location) {
             let selector = {
-                "top-left": ".js-full-page-view-top-left-action-container",
-                "top-right": ".js-full-page-view-top-right-action-container"
+                "top-left": ".js-panel-top-left-action-container",
+                "top-right": ".js-panel-top-right-action-container"
             }[location];
 
             let topActionContainer = context.querySelector(selector),
