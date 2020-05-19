@@ -23,9 +23,6 @@
     "url": "https://github.com/harm-smits/elementals/issues"
   },
   "license": "MIT",
-  "dependencies": {
-    "jquery": "^3.4.0"
-  },
   "scripts": {
     "build-tests": "webpack --progress -p"
   },
